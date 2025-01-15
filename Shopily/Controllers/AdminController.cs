@@ -5,6 +5,7 @@ using Shopily.ViewModel.Admin;
 using Shopily.ViewModel.Products;
 using Shopily.ViewModel.User;
 
+
 namespace Shopily.Controllers
 {
     public class AdminController : Controller
@@ -95,7 +96,46 @@ namespace Shopily.Controllers
 
             return RedirectToAction("Index", "Admin");
         }
-      
+        [HttpGet]
+        [Route("AdminProductEdit")]
+        public IActionResult AdminProductEdit(int id)
+        {
+            Product? item = context.Products.Where(u => u.Id == id).FirstOrDefault();
+            if (item == null)
+            {
+                return RedirectToAction("AdminProduct", "Admin");
+
+            }
+            ViewModel.Products.EditVM model = new ViewModel.Products.EditVM()
+            {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                Price = item.Price,
+                Description = item.Description,
+                ImagePath = item.ImagePath,
+                Gender = item.Gender,
+                Type = item.Type,
+            };
+            return View(model);
+
+
+        }
+        [HttpPost]
+        public IActionResult AdminProductEdit(ViewModel.Products.EditVM model)
+        {
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            Product item = new Product(model);
+
+
+            context.Products.Update(item);
+            context.SaveChanges();
+
+            return RedirectToAction("AdminProduct", "Admin");
+        }
+
 
 
 
