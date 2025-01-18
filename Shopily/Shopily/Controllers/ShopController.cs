@@ -204,12 +204,10 @@ namespace Shopily.Controllers
         {
             if (LikedId!=0)
             {
-                string sessionData = Request.Cookies["AddInLike"];
-
+               string sessionData = Request.Cookies["AddInLike"];
                 if (!string.IsNullOrEmpty(sessionData))
                 {
                     var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<CartItemVM>>(sessionData);
-
                     if (cartItems != null)
                     {
                         var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == LikedId);
@@ -229,8 +227,6 @@ namespace Shopily.Controllers
             }
             else
             {
-
-
                 if (!User.Identity.IsAuthenticated)
                 {
                     string sessionData = Request.Cookies["AddInCart"];
@@ -258,9 +254,6 @@ namespace Shopily.Controllers
                 }
                 else
                 {
-
-
-
                     var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
 
                     var cartItem = _context.Carts
