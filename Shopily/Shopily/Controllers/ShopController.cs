@@ -39,7 +39,31 @@ namespace Shopily.Controllers
             return _context.Products.Count();
         }
 
+        [Route("Liked")]
+        public IActionResult Like(int page=1)
+        {
+            var recentlyViewedJson = Request.Cookies["AddInLike"];
+            List<CartItemVM> recentlyViewedProducts = new List<CartItemVM>();
+            if (!string.IsNullOrEmpty(recentlyViewedJson))
+            {
+                try
+                {
+                    recentlyViewedProducts = JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deserializing cookie: {ex.Message}");
+                    recentlyViewedProducts = new List<CartItemVM>();
+                }
+            }
 
+            int itemsPerPage = 12;
+            var products = GetProductsForPage(page, itemsPerPage);
+            var totalProducts = GetTotalItemsCount();
+            var pagesCount = (int)Math.Ceiling((double)totalProducts / itemsPerPage);
+            ViewData["AddInLike"] = recentlyViewedProducts;
+            return View();
+        }
 
 
         [Route("Cart")]
@@ -107,61 +131,91 @@ namespace Shopily.Controllers
            
         }
 
-        public IActionResult AddInCart(int clickedId)
+        public IActionResult AddInCart(int clickedId,int likedId)
         {
-  
-            if (!User.Identity.IsAuthenticated)
+            if (likedId != 0)
             {
-                Product? item = _context.Products.FirstOrDefault(u => u.Id == clickedId);
-                var AddInCartJson = Request.Cookies["AddInCart"];
-                List<CartItemVM>AddInCart=new List<CartItemVM>();
-                if(!string.IsNullOrEmpty(AddInCartJson))
-                { 
-                AddInCart=JsonSerializer.Deserialize<List<CartItemVM>>(AddInCartJson);
+                Product? item = _context.Products.FirstOrDefault(u => u.Id == likedId);
+                var AddInLikeJson = Request.Cookies["AddInLike"];
+                List<CartItemVM> AddInLike = new List<CartItemVM>();
+                if (!string.IsNullOrEmpty(AddInLikeJson))
+                {
+                    AddInLike = JsonSerializer.Deserialize<List<CartItemVM>>(AddInLikeJson);
                 }
-                AddInCart.Add(new CartItemVM
+                AddInLike.Add(new CartItemVM
                 {
-                    ProductId=item.Id,
-                    ProductName=item.ProductName,
+                    ProductId = item.Id,
+                    ProductName = item.ProductName,
                     ImagePath = item.ImagePath,
-                    Price=item.Price,
+                    Price = item.Price,
                     //QUANTITY
-                    
+
                 });
-                var jsonData=JsonSerializer.Serialize(AddInCart);
-                Response.Cookies.Append("AddInCart",jsonData,new CookieOptions
-                    {
-                    Expires=DateTimeOffset.Now.AddDays(1)
-                });
-                var AddIn = HttpContext.Request.Cookies["AddInCart"];
-            }
-            else { 
-           
-            var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
-
-            var product = _context.Products.FirstOrDefault(p => p.Id == clickedId);
-            if (product == null)
-            {
-                ModelState.AddModelError("", "Product not found.");
-                return RedirectToAction("Index", "Home");
-            }
-
-            var existingCartItem = _context.Carts
-                .FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUserId);
-
-            if (existingCartItem == null)
-            {
-
-                var newCartItem = new Cart
+                var jsonData = JsonSerializer.Serialize(AddInLike);
+                Response.Cookies.Append("AddInLike", jsonData, new CookieOptions
                 {
-                    UserId = loggedUserId,
-                    ProductId = product.Id
-
-                };
-
-                _context.Carts.Add(newCartItem);
-                _context.SaveChanges(); 
+                    Expires = DateTimeOffset.Now.AddDays(1)
+                });
+                var AddIn = HttpContext.Request.Cookies["AddInLike"];
             }
+            else
+            {
+
+
+                if (!User.Identity.IsAuthenticated)
+                {
+                    Product? item = _context.Products.FirstOrDefault(u => u.Id == clickedId);
+                    var AddInCartJson = Request.Cookies["AddInCart"];
+                    List<CartItemVM> AddInCart = new List<CartItemVM>();
+                    if (!string.IsNullOrEmpty(AddInCartJson))
+                    {
+                        AddInCart = JsonSerializer.Deserialize<List<CartItemVM>>(AddInCartJson);
+                    }
+                    AddInCart.Add(new CartItemVM
+                    {
+                        ProductId = item.Id,
+                        ProductName = item.ProductName,
+                        ImagePath = item.ImagePath,
+                        Price = item.Price,
+                        //QUANTITY
+
+                    });
+                    var jsonData = JsonSerializer.Serialize(AddInCart);
+                    Response.Cookies.Append("AddInCart", jsonData, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(1)
+                    });
+                    var AddIn = HttpContext.Request.Cookies["AddInCart"];
+                }
+                else
+                {
+
+                    var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+
+                    var product = _context.Products.FirstOrDefault(p => p.Id == clickedId);
+                    if (product == null)
+                    {
+                        ModelState.AddModelError("", "Product not found.");
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    var existingCartItem = _context.Carts
+                        .FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUserId);
+
+                    if (existingCartItem == null)
+                    {
+
+                        var newCartItem = new Cart
+                        {
+                            UserId = loggedUserId,
+                            ProductId = product.Id
+
+                        };
+
+                        _context.Carts.Add(newCartItem);
+                        _context.SaveChanges();
+                    }
+                }
             }
 
             return RedirectToAction("Index", "Home");
