@@ -1,0 +1,20 @@
+﻿@model Shopily.ViewModel.Products.IndexVM
+@using Shopily.Entity
+@{
+    ViewData["Title"] = "Admin Products Page";
+}
+
+@foreach (Product item in Model.Items)
+{
+    <div>
+        <div>Product ID: @item.Id</div>
+        <img src="/Images/@item.ImagePath" alt="Product Image" width="300px" height="200px" />
+
+        <div>Image Path: @item.ImagePath</div>
+
+        <a href="/Admin/AdminProductEdit?Id=@item.Id">Edit</a>
+        <a href="/Admin/AdminProductDelete?Id=@item.Id">Delete</a>
+    </div>
+
+}
+

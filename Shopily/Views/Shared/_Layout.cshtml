@@ -1,22 +1,7 @@
-﻿@{
-    var loggedUserName = ViewData["LoggedUserName"] as string;
-}
+﻿
 
-<div>
-    @if (!string.IsNullOrEmpty(loggedUserName))
-    {
-        <p>Welcome, @loggedUserName!</p>  <!-- Display the logged-in user's name -->
-    }
-    else
-    {
-        <p>Please log in.</p>
-    }
-    @using (Html.BeginForm("LogOut", "User", FormMethod.Post))
-    {
-        <button type="submit">Log Out</button>
-    }
 
-</div>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Shoppers &mdash; Colorlib e-Commerce Template</title>
@@ -31,15 +16,10 @@
     <link rel="stylesheet" href="~/css/jquery-ui.css">
     <link rel="stylesheet" href="~/css/owl.carousel.min.css">
     <link rel="stylesheet" href="~/css/owl.theme.default.min.css">
-
-
     <link rel="stylesheet" href="~/css/aos.css">
-
     <link rel="stylesheet" href="~/css/style.css">
-
 </head>
 <body>
-
     <div class="site-wrap">
         <header class="site-navbar" role="banner">
             <div class="site-navbar-top">
@@ -47,15 +27,18 @@
                     <div class="row align-items-center">
 
                         <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
-                            <form action="" class="site-block-top-search">
+                            <form class="site-block-top-search" method="post" action="/Shop">
                                 <span class="icon icon-search2"></span>
-                                <input type="text" class="form-control border-0" placeholder="Search">
+                                <input type="text" name="productName" class="form-control border-0" placeholder="Search" />
+                                <button type="submit" style="display:none;"></button>
                             </form>
                         </div>
 
+
+
                         <div class="col-12 mb-3 mb-md-0 col-md-4 order-1 order-md-2 text-center">
                             <div class="site-logo">
-                                <a href="index.html" class="js-logo-clone">Shoppers</a>
+                                <a href="/Home/Index" class="js-logo-clone">Shoppers</a>
                             </div>
                         </div>
 
@@ -78,67 +61,89 @@
                     </div>
                 </div>
             </div>
+
             <nav class="site-navigation text-right text-md-center" role="navigation">
                 <div class="container">
                     <ul class="site-menu js-clone-nav d-none d-md-block">
-                        <li class="active">
-                            <a href="/Home/Index">Home</a>
-                           
-                        </li>
-                        <li class="">
-                            <a href="/About">About</a>
-                           
-                        </li>
+                        <li class="active"><a href="/Home/Index">Home</a></li>
+                        <li><a href="/About">About</a></li>
                         <li><a href="/Shop">Shop</a></li>
-                        
                         <li><a href="#">New Arrivals</a></li>
                         <li><a href="/Contact">Contact</a></li>
                     </ul>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <ul class="site-menu js-clone-nav d-none d-md-block">
+                            <li class="active">
+                            <li><a href="/Admin/Index">All users</a></li>
+                            <li><a href="/AdminProduct">All products</a></li>
+                            <li><a href="/CreateUser">Create User</a> </li>
+                            <li><a href="/ProductCreate">Create Product</a> </li>
+
+                            
+                        </ul>
+                    }
                 </div>
             </nav>
         </header>
 
+        <div>
+            @if (!string.IsNullOrEmpty(User.Identity.Name))
+            {
+                <p>Welcome, @User.Identity.Name!</p>
+
+                
+            }
+            else
+            {
+                <p>Please log in.</p>
+            }
+
+            @using (Html.BeginForm("LogOut", "User", FormMethod.Post))
+            {
+                <button type="submit">Log Out</button>
+            }
+           
+        </div>
+
         <main>
             @RenderBody()
         </main>
-<footer class="site-footer border-top">
-    <div class="container">
-        <div class="row">
-         
-            <div class="col-md-6 col-lg-3">
-                <div class="block-5 mb-5">
-                    <h3 class="footer-heading mb-4">Contact Info</h3>
-                    <ul class="list-unstyled">
-                        <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
-                        <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
-                        <li class="email">emailaddress@domain.com</li>
-                    </ul>
-                </div>
 
-                <div class="block-7">
-                    <form action="#" method="post">
-                        <label for="email_subscribe" class="footer-heading">Subscribe</label>
-                        <div class="form-group">
-                            <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
-                            <input type="submit" class="btn btn-sm btn-primary" value="Send">
+        <footer class="site-footer border-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="block-5 mb-5">
+                            <h3 class="footer-heading mb-4">Contact Info</h3>
+                            <ul class="list-unstyled">
+                                <li class="address">203 Fake St. Mountain View, San Francisco, California, USA</li>
+                                <li class="phone"><a href="tel://23923929210">+2 392 3929 210</a></li>
+                                <li class="email">emailaddress@domain.com</li>
+                            </ul>
                         </div>
-                    </form>
+
+                        <div class="block-7">
+                            <form action="#" method="post">
+                                <label for="email_subscribe" class="footer-heading">Subscribe</label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control py-4" id="email_subscribe" placeholder="Email">
+                                    <input type="submit" class="btn btn-sm btn-primary" value="Send">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-5 mt-5 text-center">
+                    <div class="col-md-12">
+                        <p>
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row pt-5 mt-5 text-center">
-            <div class="col-md-12">
-                <p>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                    Copyright &copy;<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
-                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                </p>
-            </div>
-
-        </div>
+        </footer>
     </div>
-</footer>
-  </div>
 
     <script src="~/js/jquery-3.3.1.min.js"></script>
     <script src="~/js/jquery-ui.js"></script>
@@ -148,7 +153,5 @@
     <script src="~/js/jquery.magnific-popup.min.js"></script>
     <script src="~/js/aos.js"></script>
     <script src="~/js/main.js"></script>
-
-
-  </body>
+</body>
 </html>

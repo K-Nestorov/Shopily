@@ -23,15 +23,11 @@ namespace Shopily.Controllers
         {
             var model = new IndexVM
             {
-                Items = context.Products.ToList() // Get all products from the database
+                Items = context.Products.ToList() 
             };
-            User loggedUser = Request.Cookies.GetObject<User>("UserInfo");
 
-            // Pass the logged-in user to the view
-            if (loggedUser != null)
-            {
-                ViewData["LoggedUserName"] = loggedUser.Username;  // Set the logged-in user's name in ViewData
-            }
+            
+           
 
             return View(model);
            

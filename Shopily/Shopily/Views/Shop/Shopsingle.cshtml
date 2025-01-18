@@ -1,0 +1,78 @@
+﻿@model Shopily.ViewModel.Products.SingleProductVM
+
+<main>
+    <div class="bg-light py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0">
+                    <a href="/">Home</a>
+                    <span class="mx-2 mb-0">/</span>
+                    <strong class="text-black">@Model.ProductName</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="site-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@Url.Content("~/images/" + Model.Image)" alt="@Model.ProductName" class="img-fluid">
+
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-black">@Model.ProductName</h2>
+                    <p>@Model.Description</p>
+                    <p><strong class="text-primary h4">@Model.Price</strong></p>
+
+                    <div class="mb-1 d-flex">
+                        <label class="d-flex mr-3 mb-3">
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+                                <input type="radio" name="shop-sizes">
+                            </span>
+                            <span class="d-inline-block text-black">Small</span>
+                        </label>
+                        <label class="d-flex mr-3 mb-3">
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+                                <input type="radio" name="shop-sizes">
+                            </span>
+                            <span class="d-inline-block text-black">Medium</span>
+                        </label>
+                        <label class="d-flex mr-3 mb-3">
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+                                <input type="radio" name="shop-sizes">
+                            </span>
+                            <span class="d-inline-block text-black">Large</span>
+                        </label>
+                        <label class="d-flex mr-3 mb-3">
+                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
+                                <input type="radio" name="shop-sizes">
+                            </span>
+                            <span class="d-inline-block text-black">Extra Large</span>
+                        </label>
+                    </div>
+
+                   
+
+                    <p>
+                        <form action="/Shop/AddInCart" method="post">
+                            <input type="hidden" name="clickedId" value="@Model.Id" />
+                            <div class="mb-5">
+                                <div class="input-group mb-3" style="max-width: 120px;">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                                    </div>
+                                    <input type="text" class="form-control text-center" name="quantity" value="1">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit">Add to Cart</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

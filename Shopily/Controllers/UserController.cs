@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Shopily.Entity;
 using Shopily.Repositories;
 using Shopily.ViewModel.User;
 using System.Security.Claims;
-using Shopily.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace Shopily.Controllers
@@ -14,77 +13,111 @@ namespace Shopily.Controllers
     {
         private readonly Context context;
 
-        // Constructor for dependency injection
         public UserController(Context _context)
         {
             context = _context;
         }
+
         public IActionResult Index()
         {
             return View();
         }
+
         [Route("Login")]
         public IActionResult Login()
         {
-            return View();
+            LoginVM model=new LoginVM();
+            if (model.Username == null)
+            {
+                return View(model);
+            }
+            else
+            {
+                List<Claim> claims = new List<Claim>() {
+                    new Claim(ClaimTypes.NameIdentifier , $"{model.Username}"),
+                    
+                    new Claim(ClaimTypes.Name, model.Username),
+                    new Claim(ClaimTypes.Role , model.isAdmin ? "Admin": "User"),
+                    new Claim(ClaimTypes.Sid , model.Id.ToString())
+                };
+
+                ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims,
+                CookieAuthenticationDefaults.AuthenticationScheme);
+
+                AuthenticationProperties properties = new AuthenticationProperties()
+                {
+                    AllowRefresh = true,
+                   
+                };
+
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity), properties);
+            }
+            return RedirectToAction("Index", "Home");
         }
+
         [HttpGet]
         [Route("Register")]
         public IActionResult Register()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Register(RegisterVM model)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);  // If model is invalid, return back to the view with validation errors
+                return View(model);
             }
 
             User item = new User();
-            item.RegisterUser(model);  // Assuming this method maps the RegisterVM to the User model
-
-
+            item.RegisterUser(model);
 
             context.Users.Add(item);
-            context.SaveChanges();  
-            Response.Cookies.SetObject("UserInfo", item, 30);
+            context.SaveChanges();
 
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Login(LoginVM model)
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginVM model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            // Find the user based on username and password
             User? logIn = context.Users
                 .FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
 
             if (logIn == null)
             {
-                // If login fails, return the view with the model
                 ModelState.AddModelError(string.Empty, "Invalid username or password.");
                 return View(model);
             }
 
-            // Create user data to store in a cookie
-            var userCookieData = new
+            
+            var claims = new List<Claim>
             {
-                Id = logIn.Id,
-                Username = logIn.Username,
-                Email = logIn.Email,
-                IsAdmin = logIn.IsAdmin
+                new Claim(ClaimTypes.NameIdentifier, logIn.Username),
+                new Claim(ClaimTypes.Name, logIn.Username),
+                new Claim(ClaimTypes.Email, logIn.Email),
+                new Claim(ClaimTypes.Role, logIn.IsAdmin ? "Admin" : "User"),
+                new Claim(ClaimTypes.Sid, logIn.Id.ToString())
+            };
+          
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var properties = new AuthenticationProperties
+            {
+                AllowRefresh = true,
+                IsPersistent = model.RememberMe 
             };
 
-            // Set the user information as a cookie
-            Response.Cookies.SetObject("UserInfo", userCookieData, expireTimeInMinutes: 60);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity), properties);
 
-            // Redirect to the home page or appropriate action
             return RedirectToAction("Index", "Home");
         }
 
@@ -92,25 +125,21 @@ namespace Shopily.Controllers
         [Route("Edit")]
         public IActionResult Edit()
         {
-            // Retrieve the logged-in user from the cookie
-            User loggedUser = Request.Cookies.GetObject<User>("UserInfo");
+            var loggedUser = User; 
 
-            // If no logged-in user found, redirect to login
             if (loggedUser == null)
             {
                 return RedirectToAction("Login");
             }
 
-            // Retrieve the user details from the database
-            User? item = context.Users.SingleOrDefault(u => u.Id == loggedUser.Id);
+            var userId = loggedUser.FindFirst(ClaimTypes.Sid)?.Value;
+            var item = context.Users.SingleOrDefault(u => u.Id.ToString() == userId);
 
-            // If no user found in the database, redirect to the home page
             if (item == null)
             {
                 return RedirectToAction("Home");
             }
 
-            // Populate the EditVM model with the user data
             EditVM model = new EditVM
             {
                 Id = item.Id,
@@ -120,22 +149,21 @@ namespace Shopily.Controllers
                 Email = item.Email,
             };
 
-
             return View(model);
         }
+
         [HttpPost]
         public IActionResult Edit(EditVM model)
         {
-          
-
-            User loggedUser = Request.Cookies.GetObject<User>("UserInfo");
+            var loggedUser = User; 
 
             if (loggedUser == null)
             {
                 return RedirectToAction("Login");
             }
 
-            User? item = context.Users.SingleOrDefault(u => u.Id == loggedUser.Id);
+            var userId = loggedUser.FindFirst(ClaimTypes.Sid)?.Value;
+            var item = context.Users.SingleOrDefault(u => u.Id.ToString() == userId);
 
             if (item == null)
             {
@@ -148,25 +176,22 @@ namespace Shopily.Controllers
                 return View(model);
             }
 
-            // Update the fields from the model
             if (!string.IsNullOrEmpty(model.Password))
             {
                 item.Password = model.Password;
             }
 
-
             item.EditUser(model);
             context.Users.Update(item);
             context.SaveChanges();
 
-            return RedirectToAction("Index","Home");
-        }
-        public IActionResult Logout()
-        {
-            Response.Cookies.Delete("UserInfo");
             return RedirectToAction("Index", "Home");
         }
 
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
     }
 }
-
