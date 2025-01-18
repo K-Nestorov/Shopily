@@ -59,7 +59,7 @@ namespace Shopily.Controllers
         [HttpGet]
         public IActionResult AdminEdit(Guid id) 
         {
-            // Find the user by Guid
+            
             User? item = context.Users.FirstOrDefault(u => u.Id == id);
             if (item == null)
             {
@@ -87,7 +87,6 @@ namespace Shopily.Controllers
                 return View(model);
             }
 
-            // Find the user by Guid
             User? item = context.Users.FirstOrDefault(u => u.Id == model.Id);
             if (item == null)
             {
@@ -166,8 +165,6 @@ namespace Shopily.Controllers
             return RedirectToAction("AdminProduct", "Admin");
         }
 
-
-
         [HttpGet]
         [Route("ProductCreate")]
         public IActionResult AdminProductCreate()
@@ -195,7 +192,6 @@ namespace Shopily.Controllers
                 }
             }
 
-
             Product item = new Product
             {
                 Description = model.Description,
@@ -214,11 +210,5 @@ namespace Shopily.Controllers
 
             return RedirectToAction("AdminProduct", "Admin");
         }
-
-
-
-
-
-
     }
 }
