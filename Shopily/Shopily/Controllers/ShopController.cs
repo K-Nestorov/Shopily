@@ -200,24 +200,80 @@ namespace Shopily.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Delete(int productId, int UserId)
+        public IActionResult Delete(int productId, int UserId,int LikedId)
         {
-            if (!User.Identity.IsAuthenticated)
+            if (LikedId!=0)
             {
-                return RedirectToAction("Login", "Home");
+                string sessionData = Request.Cookies["AddInLike"];
+
+                if (!string.IsNullOrEmpty(sessionData))
+                {
+                    var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<CartItemVM>>(sessionData);
+
+                    if (cartItems != null)
+                    {
+                        var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == LikedId);
+                        if (itemToRemove != null)
+                        {
+                            cartItems.Remove(itemToRemove);
+                            string updatedSessionData = System.Text.Json.JsonSerializer.Serialize(cartItems);
+                            Response.Cookies.Append("AddInLike", updatedSessionData, new CookieOptions
+                            {
+                                HttpOnly = true,
+                                Expires = DateTime.Now.AddHours(1),
+                                Path = "/"
+                            });
+                        }
+                    }
+                }
             }
-
-            var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
-
-            var cartItem = _context.Carts
-                .FirstOrDefault(c => c.UserId == loggedUserId && c.ProductId == productId);
-            if (cartItem == null)
+            else
             {
-                return RedirectToAction("Index");
-            }
 
-            _context.Carts.Remove(cartItem);
-            _context.SaveChanges();
+
+                if (!User.Identity.IsAuthenticated)
+                {
+                    string sessionData = Request.Cookies["AddInCart"];
+
+                    if (!string.IsNullOrEmpty(sessionData))
+                    {
+                        var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<CartItemVM>>(sessionData);
+
+                        if (cartItems != null)
+                        {
+                            var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == productId);
+                            if (itemToRemove != null)
+                            {
+                                cartItems.Remove(itemToRemove);
+                                string updatedSessionData = System.Text.Json.JsonSerializer.Serialize(cartItems);
+                                Response.Cookies.Append("AddInCart", updatedSessionData, new CookieOptions
+                                {
+                                    HttpOnly = true,
+                                    Expires = DateTime.Now.AddHours(1),
+                                    Path = "/"
+                                });
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+
+
+                    var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+
+                    var cartItem = _context.Carts
+                        .FirstOrDefault(c => c.UserId == loggedUserId && c.ProductId == productId);
+                    if (cartItem == null)
+                    {
+                        return RedirectToAction("Index");
+                    }
+
+                    _context.Carts.Remove(cartItem);
+                    _context.SaveChanges();
+                }
+            }
 
             return RedirectToAction("Index");
         }

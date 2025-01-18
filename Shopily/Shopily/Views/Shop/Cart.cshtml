@@ -1,11 +1,12 @@
 ﻿@model Shopily.ViewModel.Cart.IndexVM
 @{
     var recentlyViewedProducts = ViewData["AddInCart"] as List<Shopily.ViewModel.Cart.CartItemVM>;
+    double totalCost = 0;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/style/icomoon.css")">
 
 <main>
-
+    
     <div class="site-section">
         <div class="container">
             <div class="row mb-5">
@@ -36,7 +37,9 @@
 
                                                 <img src="images/@item.ImagePath" alt="@item.ProductName" class="img-fluid" />
 
-
+                                                    @{
+                                                         totalCost+=item.Price;
+                                                    }
 
                                             </td>
                                             <td class="product-name">
@@ -65,6 +68,7 @@
                                 }
                                 }
                             }
+                           
                             else{
                            @foreach (var item in Model.Items)
                             {
@@ -77,7 +81,9 @@
                                             <img src="images/@item.ImagePath" alt="@item.ProductName" class="img-fluid" />
 
 
-
+                                                @{
+                                                    totalCost += item.Price;
+                                                }
                                         </td>
                                         <td class="product-name">
                                             <h2 class="h5 text-black">@item.ProductName</h2>
@@ -113,10 +119,11 @@
                 <div class="col-md-6">
                     <div class="row mb-5">
                         <div class="col-md-6 mb-3 mb-md-0">
-                            <button class="btn btn-primary btn-sm btn-block">Update Cart</button>
+                            <p>Total Cost: @totalCost</p>
+
                         </div>
                         <div class="col-md-6">
-                            <button class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</button>
+                            <a href="/Shop"class="btn btn-outline-primary btn-sm btn-block">Continue Shopping</a>
                         </div>
                     </div>
                     <div class="row">
@@ -153,7 +160,7 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">$230.00</strong>
+                                    <strong class="text-black">@totalCost</strong>
                                 </div>
                             </div>
 
