@@ -11,8 +11,12 @@ using Shopily.ViewModel.Products;
 using Shopily.ViewModel.Pages;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+<<<<<<< HEAD
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+=======
+using System.Text.Json;
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
 
 namespace Shopily.Controllers
 {
@@ -25,7 +29,11 @@ namespace Shopily.Controllers
             _context = context;
         }
 
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
         private IEnumerable<Product> GetProductsForPage(int page, int itemsPerPage)
         {
             return _context.Products
@@ -34,17 +42,27 @@ namespace Shopily.Controllers
                 .ToList();
         }
 
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
         private int GetTotalItemsCount()
         {
             return _context.Products.Count();
         }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
         [Route("Cart")]
         public IActionResult Cart(int page = 1)
         {
             // Retrieve the logged user
+<<<<<<< HEAD
             if (User.Identity == null || !User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "User");
@@ -84,10 +102,72 @@ namespace Shopily.Controllers
                
             };
             return View(model);
+=======
+
+
+            if (!User.Identity.IsAuthenticated)
+            {
+                var recentlyViewedJson = Request.Cookies["AddInCart"];
+                List<CartItemVM> recentlyViewedProducts = new List<CartItemVM>();
+                if (!string.IsNullOrEmpty(recentlyViewedJson))
+                {
+                    try
+                    {
+                        recentlyViewedProducts = JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error deserializing cookie: {ex.Message}");
+                        recentlyViewedProducts = new List<CartItemVM>();
+                    }
+                }
+                ViewData["AddInCart"] = recentlyViewedProducts;
+            }
+            else
+            {
+
+
+                var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+
+                
+                var cartItems = _context.Carts
+                    .Where(c => c.UserId == loggedUserId) 
+                    .Include(c => c.Product)
+                    .ToList();
+
+
+        
+                int itemsPerPage = 12;
+                var products = GetProductsForPage(page, itemsPerPage);
+                var totalProducts = GetTotalItemsCount();
+                var pagesCount = (int)Math.Ceiling((double)totalProducts / itemsPerPage);
+
+
+
+                var model = new ViewModel.Cart.IndexVM 
+                {
+                    Items = cartItems.Select(c => new CartItemVM
+                    {
+                        ProductId = c.ProductId,
+                        ProductName = c.Product.ProductName,
+                        Quantity = 1,
+                        Price = c.Product.Price,
+                        ImagePath=c.Product.ImagePath,
+                        
+                    }).ToList(),
+
+
+                };
+                return View(model);
+            }
+            return View();
+           
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
         }
 
         public IActionResult AddInCart(int clickedId)
         {
+<<<<<<< HEAD
             User loggedUser = Request.Cookies.GetObject<User>("UserInfo");
             if (loggedUser == null)
             {
@@ -96,12 +176,46 @@ namespace Shopily.Controllers
 
             var product = _context.Products.FirstOrDefault(p => p.Id == clickedId);
 
+=======
+  
+            if (!User.Identity.IsAuthenticated)
+            {
+                Product? item = _context.Products.FirstOrDefault(u => u.Id == clickedId);
+                var AddInCartJson = Request.Cookies["AddInCart"];
+                List<CartItemVM>AddInCart=new List<CartItemVM>();
+                if(!string.IsNullOrEmpty(AddInCartJson))
+                { 
+                AddInCart=JsonSerializer.Deserialize<List<CartItemVM>>(AddInCartJson);
+                }
+                AddInCart.Add(new CartItemVM
+                {
+                    ProductId=item.Id,
+                    ProductName=item.ProductName,
+                    ImagePath = item.ImagePath,
+                    Price=item.Price,
+                    //QUANTITY
+                    
+                });
+                var jsonData=JsonSerializer.Serialize(AddInCart);
+                Response.Cookies.Append("AddInCart",jsonData,new CookieOptions
+                    {
+                    Expires=DateTimeOffset.Now.AddDays(1)
+                });
+                var AddIn = HttpContext.Request.Cookies["AddInCart"];
+            }
+            else { 
+           
+            var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+
+            var product = _context.Products.FirstOrDefault(p => p.Id == clickedId);
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
             if (product == null)
             {
                 ModelState.AddModelError("", "Product not found.");
                 return RedirectToAction("Index", "Home");
             }
 
+<<<<<<< HEAD
            
             var existingCartItem = _context.Carts
                 .FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUser.Id);
@@ -117,10 +231,29 @@ namespace Shopily.Controllers
 
                 _context.Carts.Add(newCartItem);
                 _context.SaveChanges();
+=======
+            var existingCartItem = _context.Carts
+                .FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUserId);
+
+            if (existingCartItem == null)
+            {
+
+                var newCartItem = new Cart
+                {
+                    UserId = loggedUserId,
+                    ProductId = product.Id
+
+                };
+
+                _context.Carts.Add(newCartItem);
+                _context.SaveChanges(); 
+            }
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
             }
 
             return RedirectToAction("Index", "Home");
         }
+<<<<<<< HEAD
         //Task ili void
        public IActionResult Delete(int productId, int UserId)
         {
@@ -129,12 +262,25 @@ namespace Shopily.Controllers
 
 
             if (loggedUser == null)
+=======
+
+        public IActionResult Delete(int productId, int UserId)
+        {
+            if (!User.Identity.IsAuthenticated)
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
             {
                 return RedirectToAction("Login", "Home");
             }
 
+<<<<<<< HEAD
             var cartItem = _context.Carts
                 .FirstOrDefault(c => c.UserId == loggedUser.Id && c.ProductId == productId);
+=======
+            var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+
+            var cartItem = _context.Carts
+                .FirstOrDefault(c => c.UserId == loggedUserId && c.ProductId == productId);
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
             if (cartItem == null)
             {
                 return RedirectToAction("Index");
@@ -152,6 +298,7 @@ namespace Shopily.Controllers
             return View();
         }
 
+      
         [Route("Shop")]
         public IActionResult Shop(string productName, string category, string productType, int page = 1)
         {
@@ -195,6 +342,11 @@ namespace Shopily.Controllers
                 ProductName = productName,
                 Category = category,
                 ProductType = productType,
+<<<<<<< HEAD
+=======
+
+           
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
                 MaleCount = maleCount,
                 FemaleCount = femaleCount,
                 KidsCount = kidsCount
@@ -203,10 +355,18 @@ namespace Shopily.Controllers
             return View(model);
         }
 
+<<<<<<< HEAD
         private List<Product> GetAllProducts()
         {
            
             return _context.Products.ToList(); 
+=======
+
+        private List<Product> GetAllProducts()
+        {
+           
+            return _context.Products.ToList();  
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
         }
         public IActionResult Shopsingle(int ProductId)
         {
@@ -312,6 +472,80 @@ namespace Shopily.Controllers
         }
 
 
+
+
+
+
+
+
+
+
+        public IActionResult Shopsingle(int ProductId)
+        {
+            // Retrieve the product
+            Product? item = _context.Products.FirstOrDefault(u => u.Id == ProductId);
+            if (item == null)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // Create the SingleProductVM for the view
+            SingleProductVM model = new SingleProductVM
+            {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                Description = item.Description,
+                Price = item.Price,
+                Gender = item.Gender,
+                Image = item.ImagePath,
+            };
+
+            // Get the cookie
+            var recentlyViewedJson = Request.Cookies["RecentlyViewed"];
+            List<RecentlyViewedCookie> recentlyViewedProducts = new List<RecentlyViewedCookie>();
+
+            if (!string.IsNullOrEmpty(recentlyViewedJson))
+            {
+                try
+                {
+                    recentlyViewedProducts = JsonSerializer.Deserialize<List<RecentlyViewedCookie>>(recentlyViewedJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deserializing cookie: {ex.Message}");
+                    recentlyViewedProducts = new List<RecentlyViewedCookie>();
+                }
+            }
+
+            // Add the product to the recently viewed list if not already present
+            if (recentlyViewedProducts.All(p => p.ProductId != item.Id))
+            {
+                recentlyViewedProducts.Add(new RecentlyViewedCookie
+                {
+                    ProductId = item.Id,
+                    ProductName = item.ProductName,
+                    Description = item.Description,
+                    Price = item.Price,
+                    ImagePath = item.ImagePath,
+                });
+            }
+
+            // Serialize and save the updated list back to the cookie
+            var jsonData = JsonSerializer.Serialize(recentlyViewedProducts);
+            Response.Cookies.Append("RecentlyViewed", jsonData, new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddMinutes(30)
+            });
+
+            // Debugging: Verify the cookie data
+            Console.WriteLine($"Serialized Recently Viewed Products: {jsonData}");
+
+            // Pass the data to the view
+            var recentlyViewed = HttpContext.Request.Cookies["RecentlyViewed"];
+            ViewBag.RecentlyViewed = recentlyViewed;
+
+            return View(model);
+        }
 
 
 

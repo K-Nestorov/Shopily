@@ -1,0 +1,79 @@
+﻿@using Shopily.Entity;
+@using Shopily.Cookies
+@model Shopily.ViewModel.User.EditVM
+
+@{
+   
+    ViewData["title"] = "Edit User";
+}
+
+<fieldset>
+    <legend>Edit User</legend>
+    <form action="/User/Edit" method="post">
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="grid">
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Username)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.TextBoxFor(m => m.Username)</div>
+                    @Html.ValidationMessageFor(m => m.Username)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.OldPassword)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.PasswordFor(m => m.OldPassword)</div>
+                    @Html.ValidationMessageFor(m => m.OldPassword)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-1">New @Html.LabelFor(m => m.Password)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.PasswordFor(m => m.Password)</div>
+                    @Html.ValidationMessageFor(m => m.Password)
+                </div>
+            </div>
+
+            @if (ViewData["PasswordError"] != null)
+            {
+                <div class="text-danger">
+                    @ViewData["PasswordError"]
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.FirstName)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.TextBoxFor(m => m.FirstName)</div>
+                    @Html.ValidationMessageFor(m => m.FirstName)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.LastName)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.TextBoxFor(m => m.LastName)</div>
+                    @Html.ValidationMessageFor(m => m.LastName)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Email)</div>
+                <div class="col-2">
+                    <div class="col-1">@Html.TextBoxFor(m => m.Email)</div>
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-2">
+                    <a class="right" href="/Home/Index">Back</a>
+                    <input type="submit" class="right" value="Save" />
+                </div>
+            </div>
+        </div>
+    </form>
+</fieldset>

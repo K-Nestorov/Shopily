@@ -23,7 +23,11 @@
                 <div class="col-md-6">
                     <h2 class="text-black">@Model.ProductName</h2>
                     <p>@Model.Description</p>
+<<<<<<< HEAD
                     <p><strong class="text-primary h4">$@Model.Price</strong></p>
+=======
+                    <p><strong class="text-primary h4">@Model.Price</strong></p>
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
 
                     <div class="mb-1 d-flex">
                         <label class="d-flex mr-3 mb-3">
@@ -52,6 +56,7 @@
                         </label>
                     </div>
 
+<<<<<<< HEAD
                     <div class="mb-5">
                         <div class="input-group mb-3" style="max-width: 120px;">
                             <div class="input-group-prepend">
@@ -63,10 +68,27 @@
                             </div>
                         </div>
                     </div>
+=======
+                   
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
 
                     <p>
                         <form action="/Shop/AddInCart" method="post">
                             <input type="hidden" name="clickedId" value="@Model.Id" />
+<<<<<<< HEAD
+=======
+                            <div class="mb-5">
+                                <div class="input-group mb-3" style="max-width: 120px;">
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+                                    </div>
+                                    <input type="text" class="form-control text-center" name="quantity" value="1">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+                                    </div>
+                                </div>
+                            </div>
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
                             <button type="submit">Add to Cart</button>
                         </form>
                     </p>

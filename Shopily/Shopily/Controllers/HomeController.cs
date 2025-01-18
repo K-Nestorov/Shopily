@@ -12,8 +12,6 @@ namespace Shopily.Controllers
     public class HomeController : Controller
     {
         private readonly Context context;
-
-      
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger, Context _context)
@@ -41,8 +39,6 @@ namespace Shopily.Controllers
                 }
             }
             ViewData["RecentlyViewed"] = recentlyViewedProducts;
-           // var recentlyViewedProducts = ViewData["RecentlyViewed"] as List<Shopily.ViewModel.Products.RecentlyViewedCookie>;
-
 
             return View(model);
            
@@ -61,8 +57,6 @@ namespace Shopily.Controllers
         public IActionResult Thankyou()
         {
             return View();
-        }
-        
-
+        }       
     }
 }

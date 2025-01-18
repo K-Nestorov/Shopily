@@ -57,9 +57,13 @@
                                 <ul>
                                     @if (Model.Pager != null && Model.Pager.CurrentPage > 1)
                                     {
+<<<<<<< HEAD
                                         <li>
                                             <a href="@Url.Action("Shop", new { page = Model.Pager.CurrentPage - 1, productName = Model.ProductName, category = Model.Category, productType = Model.ProductType })">&lt;</a>
                                         </li>
+=======
+                                        <li><a href="@Url.Action("Shop", new { page = Model.Pager.CurrentPage - 1, productName = Model.ProductName, category = Model.Category, productType = Model.ProductType })">&lt;</a></li>
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
                                     }
 
                                     @if (Model.Pager != null)
@@ -74,9 +78,13 @@
 
                                     @if (Model.Pager != null && Model.Pager.CurrentPage < Model.Pager.PagesCount)
                                     {
+<<<<<<< HEAD
                                         <li>
                                             <a href="@Url.Action("Shop", new { page = Model.Pager.CurrentPage + 1, productName = Model.ProductName, category = Model.Category, productType = Model.ProductType })">&gt;</a>
                                         </li>
+=======
+                                        <li><a href="@Url.Action("Shop", new { page = Model.Pager.CurrentPage + 1, productName = Model.ProductName, category = Model.Category, productType = Model.ProductType })">&gt;</a></li>
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
                                     }
                                 </ul>
                             </div>
@@ -86,6 +94,7 @@
                 </div>
 
                 <div class="col-md-3 order-1 mb-5 mb-md-0">
+<<<<<<< HEAD
                     <div class="border p-4 rounded mb-4">
                         <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
                         <ul class="list-unstyled mb-0">
@@ -94,6 +103,33 @@
                             <li class="mb-1"><a href="/Shop?category=Kids" class="d-flex"><span>Children</span> <span class="text-black ml-auto">(@Model.KidsCount)</span></a></li>
                         </ul>
                     </div>
+=======
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-1">
+                            <a href="/Shop?category=Male" class="d-flex">
+                                <span>Men</span>
+                                <span class="text-black ml-auto">(@Model.MaleCount)</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="/Shop?category=Female" class="d-flex">
+                                <span>Women</span>
+                                <span class="text-black ml-auto">(@Model.FemaleCount)</span>
+                            </a>
+                        </li>
+                        <li class="mb-1">
+                            <a href="/Shop?category=Kids" class="d-flex">
+                                <span>Children</span>
+                                <span class="text-black ml-auto">(@Model.KidsCount)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+
+
+
+
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
 
                     <div class="border p-4 rounded mb-4">
                         <div class="mb-4">

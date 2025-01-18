@@ -28,6 +28,10 @@ var app = builder.Build();
 app.UseAuthentication(); // Enables authentication middleware
 app.UseAuthorization(); // Enables authorization middleware
 app.UseStaticFiles(); // Enables static file middleware (CSS, JS, etc.)
+<<<<<<< HEAD
+=======
+app.UseStaticFiles();
+>>>>>>> e752cef18d7408f29f6e3814efda787e4d92bb84
 
 // Default route setup for MVC
 app.MapControllerRoute(
