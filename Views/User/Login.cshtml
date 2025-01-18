@@ -1,0 +1,24 @@
+﻿@model Shopily.ViewModel.User.LoginVM
+
+<fieldset>
+
+    <legend>Login</legend>
+    <form action="/User/Login" method="post">
+
+        <div> @Html.LabelFor(m => m.Username)</div>
+        <div>@Html.TextBoxFor(m => m.Username)</div>
+        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Username)</div>
+        <div> @Html.LabelFor(m => m.Password)</div>
+        <div>@Html.PasswordFor(m => m.Password)</div>
+        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Password)</div>
+
+
+        <input type="submit" value="Login" />
+    </form>
+
+
+
+
+
+
+</fieldset>

@@ -4,6 +4,7 @@ using Shopily.Entity;
 using Shopily.Repositories;
 using Shopily.ViewModel.Products;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Shopily.Controllers
 {
@@ -23,15 +24,25 @@ namespace Shopily.Controllers
         {
             var model = new IndexVM
             {
-                Items = context.Products.ToList() // Get all products from the database
+                Items = context.Products.ToList() 
             };
-            User loggedUser = Request.Cookies.GetObject<User>("UserInfo");
-
-            // Pass the logged-in user to the view
-            if (loggedUser != null)
+            var recentlyViewedJson = Request.Cookies["RecentlyViewed"];
+            List<RecentlyViewedCookie> recentlyViewedProducts = new List<RecentlyViewedCookie>();
+            if (!string.IsNullOrEmpty(recentlyViewedJson))
             {
-                ViewData["LoggedUserName"] = loggedUser.Username;  // Set the logged-in user's name in ViewData
+                try
+                {
+                    recentlyViewedProducts = JsonSerializer.Deserialize<List<RecentlyViewedCookie>>(recentlyViewedJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error deserializing cookie: {ex.Message}");
+                    recentlyViewedProducts = new List<RecentlyViewedCookie>();
+                }
             }
+            ViewData["RecentlyViewed"] = recentlyViewedProducts;
+           // var recentlyViewedProducts = ViewData["RecentlyViewed"] as List<Shopily.ViewModel.Products.RecentlyViewedCookie>;
+
 
             return View(model);
            

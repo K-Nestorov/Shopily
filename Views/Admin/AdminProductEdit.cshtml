@@ -1,0 +1,78 @@
+﻿@model Shopily.ViewModel.Products.EditVM
+
+
+@{
+   
+    ViewData["title"] = "Edit Product";
+}
+
+<fieldset>
+    <legend>Edit Product</legend>
+    <form action="/Admin/AdminProductEdit" method="post">
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="grid">
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.ProductName)</div>
+                <div class="col-2">@Html.TextBoxFor(m => m.ProductName, new { @class = "form-control" })</div>
+                @Html.ValidationMessageFor(m => m.ProductName)
+            </div>
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Description)</div>
+                <div class="col-2">@Html.TextBoxFor(m => m.Description, new { @class = "form-control" })</div>
+                @Html.ValidationMessageFor(m => m.Description)
+            </div>
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Price)</div>
+                <div class="col-2">@Html.TextBoxFor(m => m.Price, new { @class = "form-control" })</div>
+                @Html.ValidationMessageFor(m => m.Price)
+            </div>
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Type)</div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.Type, new SelectList(new List<SelectListItem>
+                    {
+                    new SelectListItem { Value = "Boots", Text = "Boots" },
+                    new SelectListItem { Value = "Jacket", Text = "Jacket" },
+                    new SelectListItem { Value = "T-shirt", Text = "T-shirt" }
+                    }, "Value", "Text"), "-- Select Type --", new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Type)
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.Gender)</div>
+                <div class="col-2">
+                    @Html.DropDownListFor(m => m.Gender, new SelectList(new List<SelectListItem>
+                    {
+                    new SelectListItem { Value = "Male", Text = "Male" },
+                    new SelectListItem { Value = "Female", Text = "Female" },
+                    new SelectListItem { Value = "Kids", Text = "Kids" }
+                    }, "Value", "Text"), "-- Select Type --", new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(m => m.Gender)
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-1">@Html.LabelFor(m => m.ImagePath)</div>
+                <div class="col-2">@Html.TextBoxFor(m => m.ImagePath, new { @class = "form-control" })</div>
+                @Html.ValidationMessageFor(m => m.ImagePath)
+            </div>
+
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-2">
+                    <a class="btn btn-secondary right" href="/Admin/AdminProduct">Back</a>
+                    <input type="submit" class="btn btn-primary right" value="Save" />
+                </div>
+            </div>
+        </div>
+    </form>
+</fieldset>

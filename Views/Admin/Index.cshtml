@@ -1,0 +1,92 @@
+﻿@model Shopily.ViewModel.Admin.AdminIndexVm
+@using Shopily.Entity
+@{
+    ViewData["title"] = "USERS Admin View";
+}
+
+<div class="admin-view-container">
+    <h1>Users Administration</h1>
+    <div class="actions">
+        <a class="btn btn-primary" href="/Admin/CreateUser">Create New User</a>
+    </div>
+
+    <div class="user-grid">
+        <div class="grid-header">
+            <div class="grid-col">First Name</div>
+            <div class="grid-col">Last Name</div>
+            <div class="grid-col">Username</div>
+            <div class="grid-col">Email</div>
+            <div class="grid-col">Is Admin</div>
+            <div class="grid-col">Actions</div>
+        </div>
+
+        @foreach (User item in Model.Items)
+        {
+            <div class="grid-row">
+                <div class="grid-col">@item.FirstName</div>
+                <div class="grid-col">@item.LastName</div>
+                <div class="grid-col">@item.Username</div>
+                <div class="grid-col">@item.Email</div>
+                <div class="grid-col">@(item.IsAdmin ? "Yes" : "No")</div>
+                <div class="grid-col">
+                    <a class="btn btn-secondary" href="/Admin/AdminEdit?Id=@item.Id">Edit</a>
+                    <a class="btn btn-danger" href="/Admin/Delete?Id=@item.Id">Delete</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .admin-view-container {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+
+    .actions {
+        margin-bottom: 15px;
+    }
+
+    .btn {
+        text-decoration: none;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+    }
+
+    .user-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+    }
+
+    .grid-header {
+        font-weight: bold;
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        display: contents;
+    }
+
+    .grid-row {
+        border-bottom: 1px solid #dee2e6;
+        display: contents;
+    }
+
+    .grid-col {
+        padding: 10px;
+        text-align: left;
+    }
+</style>

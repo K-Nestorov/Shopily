@@ -1,0 +1,66 @@
+﻿@model Shopily.ViewModel.Admin.CreateVM
+@{
+  
+    ViewData["Title"] = "Admin Create Product PAGE";
+}
+
+<fieldset>
+    <legend>Create Product</legend>
+    <form action="/Admin/AdminProductCreate" method="post" enctype="multipart/form-data">
+        <div>@Html.LabelFor(m => m.ProductName)</div>
+        <div>@Html.TextBoxFor(m => m.ProductName)</div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.ProductName)</div>
+
+        <div>@Html.LabelFor(m => m.Description)</div>
+        <div>@Html.TextBoxFor(m => m.Description)</div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Description)</div>
+
+        <div>@Html.LabelFor(m => m.Price)</div>
+        <div>@Html.TextBoxFor(m => m.Price)</div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Price)</div>
+        <div>
+            @Html.LabelFor(m => m.Type, "Product Type")
+        </div>
+        <div>
+            @Html.DropDownListFor(
+                     m => m.Type,
+                     new SelectList(new[]
+                     {
+            new { Value = "Boots", Text = "Boots" },
+            new { Value = "Jacket", Text = "Jacket" },
+            new { Value = "Sweater", Text = "Sweater" }
+            }, "Value", "Text"),
+                     "Select a Type"
+                     )
+        </div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Type)</div>
+
+        <div>
+            @Html.LabelFor(m => m.Gender, "Gender")
+        </div>
+        <div>
+            @Html.DropDownListFor(
+                     m => m.Gender,
+                     new SelectList(new[]
+                     {
+            new { Value = "Male", Text = "Male" },
+            new { Value = "Female", Text = "Female" },
+            new { Value = "Kids", Text = "Kids" }
+            }, "Value", "Text"),
+                     "Select Gender"
+                     )
+        </div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Gender)</div>
+
+        <div>@Html.LabelFor(m => m.WareHouseQuantity)</div>
+        <div>@Html.TextBoxFor(m => m.WareHouseQuantity)</div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.WareHouseQuantity)</div>
+
+
+        <div>@Html.LabelFor(m => m.ImagePath)</div>
+        <div><input type="file" name="ImagePath" /></div>
+        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.ImagePath)</div>
+
+        <input type="submit" value="Create Product" />
+    </form>
+</fieldset>
