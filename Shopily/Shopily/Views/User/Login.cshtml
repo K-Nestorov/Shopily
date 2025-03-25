@@ -1,24 +1,46 @@
-﻿@model Shopily.ViewModel.User.LoginVM
+﻿@using Shopily.Domain.ViewModel.User
+@model LoginVM
 
-<fieldset>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4>Login</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/User/Login" method="post">
+                        <!-- Username Field -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Username, "Username", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Enter your username" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Username)
+                            </div>
+                        </div>
 
-    <legend>Login</legend>
-    <form action="/User/Login" method="post">
+                        <!-- Password Field -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Password, "Password", new { @class = "form-label" })
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Enter your password" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Password)
+                            </div>
+                        </div>
 
-        <div> @Html.LabelFor(m => m.Username)</div>
-        <div>@Html.TextBoxFor(m => m.Username)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Username)</div>
-        <div> @Html.LabelFor(m => m.Password)</div>
-        <div>@Html.PasswordFor(m => m.Password)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Password)</div>
-
-
-        <input type="submit" value="Login" />
-    </form>
-
-
-
-
-
-
-</fieldset>
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">Don't have an account? <a href="/Register" class="text-primary">Register here</a></small>
+                    <small class="text-muted">Forgotten your password? <a href="/User/ForgotPassword" class="text-primary">Forgotten password</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

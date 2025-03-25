@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutMe" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Shop</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Orders</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="AllUsers" xml:space="preserve">
+    <value>All users</value>
+  </data>
+  <data name="Allproducts" xml:space="preserve">
+    <value>All products</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Create User</value>
+  </data>
+  <data name="CreateProduct" xml:space="preserve">
+    <value>Create Product</value>
+  </data>
+  <data name="Subsribe" xml:space="preserve">
+    <value>Subsribe</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email
+</value>
+  </data>
+  <data name="BestShoes" xml:space="preserve">
+    <value>Finding Your Perfect Shoes</value>
+  </data>
+  <data name="Under" xml:space="preserve">
+    <value>A wide variety of shoes for him and her and more</value>
+  </data>
+  <data name="Collections" xml:space="preserve">
+    <value>Collections</value>
+  </data>
+  <data name="Women" xml:space="preserve">
+    <value>Women</value>
+  </data>
+  <data name="Men" xml:space="preserve">
+    <value>Men</value>
+  </data>
+  <data name="Kids" xml:space="preserve">
+    <value>Kids</value>
+  </data>
+  <data name="RecentlyView" xml:space="preserve">
+    <value>Recently View Products</value>
+  </data>
+  <data name="NoView" xml:space="preserve">
+    <value>No recently viewed products.</value>
+  </data>
+  <data name="BigSale" xml:space="preserve">
+    <value>Big Sale</value>
+  </data>
+  <data name="Less" xml:space="preserve">
+    <value>50% less in all items</value>
+  </data>
+  <data name="BigText" xml:space="preserve">
+    <value>Clothes with the highest quality and lowest prices are reduced even more in the month of December, don't think about it, get it</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>How we started</value>
+  </data>
+  <data name="FreeShipping" xml:space="preserve">
+    <value>Free Shipping</value>
+  </data>
+  <data name="Loremtext" xml:space="preserve">
+    <value>Our journey began with a simple idea: to create a shopping experience that combines quality, affordability, and convenience. What started as a small passion project has grown into a thriving online store, offering carefully curated products for customers worldwide.
+
+From the very beginning, we focused on sourcing high-quality items, working with trusted suppliers, and ensuring excellent customer service. With dedication and hard work, we expanded our collections, embraced innovation, and built a community of loyal customers who inspire us every day.
+
+Today, we continue to evolve, always striving to bring you the best products while staying true to our values of trust, transparency, and customer satisfaction. Thank you for being part of our story!</value>
+  </data>
+  <data name="FreeShip" xml:space="preserve">
+    <value>Your first order will ship for free</value>
+  </data>
+  <data name="FreeReturn" xml:space="preserve">
+    <value>Returns are free 1 week after receiving the shipment</value>
+  </data>
+  <data name="FreeRet" xml:space="preserve">
+    <value>Free Returns</value>
+  </data>
+  <data name="CustomSupport" xml:space="preserve">
+    <value>Customer Support</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>Our team is ready to answer any of your questions 24/7
+
+</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="GetIn" xml:space="preserve">
+    <value>Get In Touch</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
+  <data name="Thankyou" xml:space="preserve">
+    <value>Thank you</value>
+  </data>
+  <data name="CompleteOrder" xml:space="preserve">
+    <value>Your order was successfuly completed.</value>
+  </data>
+  <data name="BackToShop" xml:space="preserve">
+    <value>Back to shop</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>Product Name</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Coupon" xml:space="preserve">
+    <value>Enter your coupon code if you have one</value>
+  </data>
+  <data name="Coup" xml:space="preserve">
+    <value>Coupon</value>
+  </data>
+  <data name="CouponCode" xml:space="preserve">
+    <value>Coupon Code</value>
+  </data>
+  <data name="ApplyCoupon" xml:space="preserve">
+    <value>Apply Coupon</value>
+  </data>
+  <data name="ProccedToCheckout" xml:space="preserve">
+    <value>Proceed To Checkout</value>
+  </data>
+  <data name="FName" xml:space="preserve">
+    <value>First Name is required</value>
+  </data>
+  <data name="LName" xml:space="preserve">
+    <value>Last name is required</value>
+  </data>
+  <data name="EmailS" xml:space="preserve">
+    <value>Please enter a valid email address</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="PhoneL" xml:space="preserve">
+    <value>Phone number is required</value>
+  </data>
+  <data name="ShippingAddress" xml:space="preserve">
+    <value>Shipping Address</value>
+  </data>
+  <data name="County" xml:space="preserve">
+    <value>County</value>
+  </data>
+  <data name="CountryL" xml:space="preserve">
+    <value>Country is required</value>
+  </data>
+  <data name="OrderNotes" xml:space="preserve">
+    <value>Order Notes</value>
+  </data>
+  <data name="ContinueShoping" xml:space="preserve">
+    <value>Continue Shopping</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Add to Cart</value>
+  </data>
+  <data name="AddToLike" xml:space="preserve">
+    <value>Add To Like</value>
+  </data>
+  <data name="ShopAll" xml:space="preserve">
+    <value>Shop All</value>
+  </data>
+  <data name="Boots" xml:space="preserve">
+    <value>Boots</value>
+  </data>
+  <data name="Sweater" xml:space="preserve">
+    <value>Sweater</value>
+  </data>
+  <data name="Jacket" xml:space="preserve">
+    <value>Jackter</value>
+  </data>
+  <data name="ProductType" xml:space="preserve">
+    <value>Product Type</value>
+  </data>
+  <data name="NoProducts" xml:space="preserve">
+    <value>No products found.</value>
+  </data>
+  <data name="NoOrders" xml:space="preserve">
+    <value>You dont have Orders </value>
+  </data>
+  <data name="Edityourprofile" xml:space="preserve">
+    <value>Edit your profile</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+</root>

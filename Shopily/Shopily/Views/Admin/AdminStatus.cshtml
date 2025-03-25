@@ -1,0 +1,89 @@
+﻿@using Shopily.Domain.ViewModel.Orders
+@model List<OrderStatus>
+
+@{
+    ViewData["Title"] = "Admin Order Status";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Admin Order Status</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            No orders available.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="m-0">Order Status Management</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td>@order.Id.ToString().Substring(0, 8)...</td> 
+                                <td>
+                                    <form asp-controller="Admin" asp-action="AdminStatus" method="post" id="statusForm_@order.Id">
+                                        <input type="hidden" name="Id" value="@order.Id.ToString()" />
+                                        <select name="Status" class="form-select" onchange="this.form.submit()">
+                                            <option value="Pending" selected="@(order.Status == "Pending" ? "selected" : null)">Pending</option>
+                                            <option value="Processing" selected="@(order.Status == "Processing" ? "selected" : null)">Processing</option>
+                                            <option value="Completed" selected="@(order.Status == "Completed" ? "selected" : null)">Completed</option>
+                                            <option value="Cancelled" selected="@(order.Status == "Cancelled" ? "selected" : null)">Cancelled</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="/Order/OrderDetails?Id=@order.Id" class="btn btn-info btn-sm" title="View Order Details">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Bootstrap Icons (Optional) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Optionally, if you're adding custom styles -->
+<style>
+   
+    .form-select {
+        width: 100%;
+        max-width: 200px;
+    }
+
+
+    table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+   
+    .btn-info {
+        background-color: #17a2b8;
+        border-color: #17a2b8;
+    }
+
+   
+    .alert-info {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+</style>

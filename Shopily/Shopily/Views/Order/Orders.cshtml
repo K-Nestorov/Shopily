@@ -1,0 +1,85 @@
+﻿@using Shopily.Domain.ViewModel.Orders
+@model List<List<ListOrders>>
+
+<link rel="stylesheet" href="@Url.Content("~/css/style/icomoon.css")">
+@{
+    double OrderTotal = 0; 
+}
+<main>
+    <div class="bg-light py-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 mb-0"><a href="/Home">@Shopily.Resources.Resource.Home</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">@Shopily.Resources.Resource.Orders</strong></div>
+            </div>
+        </div>
+    </div>
+    <div class="site-section">
+        <div class="container">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="row mb-5">
+                    <div class="col-md-12 text-center">
+                        <h2 class="text-black">@Shopily.Resources.Resource.NoOrders</h2>
+                       
+                        <a href="/Shop" class="btn btn-primary">@Shopily.Resources.Resource.ContinueShoping</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row mb-5">
+                    <form class="col-md-12" method="post">
+                        <div class="site-blocks-table">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="product-thumbnail">@Shopily.Resources.Resource.Image</th>
+                                        <th class="product-name">@Shopily.Resources.Resource.ProductName</th>
+                                        <th class="product-price">@Shopily.Resources.Resource.Price</th>
+                                        <th class="product-quantity">@Shopily.Resources.Resource.Quantity</th>
+                                        <th class="product-total">@Shopily.Resources.Resource.Total</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var order in Model)
+                                    {
+                                        double orderTotal = 0;
+                                        
+                                        foreach (var item in order)
+                                        {
+                                            double itemTotal = item.Product.Price * item.Quantity;
+                                            orderTotal += itemTotal;
+                                            OrderTotal += itemTotal;
+                                            
+                                            <tr>
+                                                <td class="product-thumbnail">
+                                                    <img src="images/@item.Product.ImagePath" alt="@item.Product.ProductName" class="img-fluid" />
+                                                </td>
+                                                <td class="product-name">
+                                                    <h2 class="h5 text-black">@item.Product.ProductName</h2>
+                                                </td>
+                                                <td>@item.Product.Price.ToString("F2")</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@itemTotal.ToString("F2")</td>
+                                            </tr>
+                                        }
+
+                                        <tr>
+                                            <td colspan="4" class="text-right">
+                                                <strong>@Shopily.Resources.Resource.Total</strong>
+                                            </td>
+                                            <td>
+                                                <strong>@orderTotal.ToString("F2")</strong>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+</main>

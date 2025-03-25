@@ -1,79 +1,93 @@
-﻿@using Shopily.Entity;
-@using Shopily.Cookies
-@model Shopily.ViewModel.User.EditVM
+﻿@using Shopily.Domain.Entity;
+@using Shopily.Utility;
+@using Shopily.Domain.ViewModel.User;
+@model EditVM
 
 @{
-   
     ViewData["title"] = "Edit User";
 }
 
-<fieldset>
-    <legend>Edit User</legend>
-    <form action="/User/Edit" method="post">
-        @Html.HiddenFor(m => m.Id)
-
-        <div class="grid">
-            <div class="row">
-                <div class="col-1">@Html.LabelFor(m => m.Username)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.TextBoxFor(m => m.Username)</div>
-                    @Html.ValidationMessageFor(m => m.Username)
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Edit User</h4>
                 </div>
-            </div>
+                <div class="card-body">
+                    <form action="/User/Edit" method="post">
+                        @Html.HiddenFor(m => m.Id)
 
-            <div class="row">
-                <div class="col-1">@Html.LabelFor(m => m.OldPassword)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.PasswordFor(m => m.OldPassword)</div>
-                    @Html.ValidationMessageFor(m => m.OldPassword)
-                </div>
-            </div>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Username, "Username", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Enter your username" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Username)
+                            </div>
+                        </div>
 
-            <div class="row">
-                <div class="col-1">New @Html.LabelFor(m => m.Password)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.PasswordFor(m => m.Password)</div>
-                    @Html.ValidationMessageFor(m => m.Password)
-                </div>
-            </div>
+                        <!-- Old Password -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.OldPassword, "Old Password", new { @class = "form-label", autocomplete = "new-password" })
+                            @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control", @placeholder = "Enter your old password", autocomplete = "new-password" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.OldPassword)
+                            </div>
+                        </div>
 
-            @if (ViewData["PasswordError"] != null)
-            {
-                <div class="text-danger">
-                    @ViewData["PasswordError"]
-                </div>
-            }
+                        <!-- New Password -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Password, "New Password", new { @class = "form-label" })
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Enter your new password" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Password)
+                            </div>
+                        </div>
 
-            <div class="row">
-                <div class="col-1">@Html.LabelFor(m => m.FirstName)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.TextBoxFor(m => m.FirstName)</div>
-                    @Html.ValidationMessageFor(m => m.FirstName)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-1">@Html.LabelFor(m => m.LastName)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.TextBoxFor(m => m.LastName)</div>
-                    @Html.ValidationMessageFor(m => m.LastName)
-                </div>
-            </div>
+                        <!-- Password Error -->
+                        @if (ViewData["PasswordError"] != null)
+                        {
+                            <div class="text-danger">
+                                @ViewData["PasswordError"]
+                            </div>
+                        }
 
-            <div class="row">
-                <div class="col-1">@Html.LabelFor(m => m.Email)</div>
-                <div class="col-2">
-                    <div class="col-1">@Html.TextBoxFor(m => m.Email)</div>
-                    @Html.ValidationMessageFor(m => m.Email)
-                </div>
-            </div>
+                        <!-- First Name -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.FirstName, "First Name", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "Enter your first name" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
+                        </div>
 
-            <div class="row">
-                <div class="col-1"></div>
-                <div class="col-2">
-                    <a class="right" href="/Home/Index">Back</a>
-                    <input type="submit" class="right" value="Save" />
+                        <!-- Last Name -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.LastName, "Last Name", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Enter your last name" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.LastName)
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Email, "Email", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter your email address" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/Home" class="btn btn-outline-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </form>
-</fieldset>
+    </div>
+</div>

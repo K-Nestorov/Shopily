@@ -1,66 +1,159 @@
-﻿@model Shopily.ViewModel.Admin.CreateVM
+﻿@using Shopily.Domain.ViewModel.Admin
+@model CreateVM
 @{
-  
     ViewData["Title"] = "Admin Create Product PAGE";
 }
 
-<fieldset>
-    <legend>Create Product</legend>
-    <form action="/Admin/AdminProductCreate" method="post" enctype="multipart/form-data">
-        <div>@Html.LabelFor(m => m.ProductName)</div>
-        <div>@Html.TextBoxFor(m => m.ProductName)</div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.ProductName)</div>
-
-        <div>@Html.LabelFor(m => m.Description)</div>
-        <div>@Html.TextBoxFor(m => m.Description)</div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Description)</div>
-
-        <div>@Html.LabelFor(m => m.Price)</div>
-        <div>@Html.TextBoxFor(m => m.Price)</div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Price)</div>
-        <div>
-            @Html.LabelFor(m => m.Type, "Product Type")
+<div class="container my-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>Create Product</h4>
         </div>
-        <div>
-            @Html.DropDownListFor(
-                     m => m.Type,
-                     new SelectList(new[]
-                     {
-            new { Value = "Boots", Text = "Boots" },
-            new { Value = "Jacket", Text = "Jacket" },
-            new { Value = "Sweater", Text = "Sweater" }
-            }, "Value", "Text"),
-                     "Select a Type"
-                     )
+        <div class="card-body">
+            <form action="/Admin/AdminProductCreate" method="post" enctype="multipart/form-data">
+
+                <!-- Product Name -->
+                <div class="mb-4">
+                    <label class="form-label" for="ProductName">@Html.LabelFor(m => m.ProductName)</label>
+                    @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", id = "productName" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.ProductName)</div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label class="form-label" for="Description">@Html.LabelFor(m => m.Description)</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control", id = "productDescription" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.Description)</div>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-4">
+                    <label class="form-label" for="Price">@Html.LabelFor(m => m.Price)</label>
+                    @Html.TextBoxFor(m => m.Price, new { @class = "form-control", id = "productPrice" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.Price)</div>
+                </div>
+
+                <!-- Product Type -->
+                <div class="mb-4">
+                    <label class="form-label" for="Type">@Html.LabelFor(m => m.Type, "Product Type")</label>
+                    @Html.DropDownListFor(m => m.Type, new SelectList(new[]
+                             {
+                    new { Value = "Boots", Text = "Boots" },
+                    new { Value = "Jacket", Text = "Jacket" },
+                    new { Value = "Sweater", Text = "Sweater" }
+                    }, "Value", "Text"), "Select a Type", new { @class = "form-select", id = "productType" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.Type)</div>
+                </div>
+
+                <!-- Gender -->
+                <div class="mb-4">
+                    <label class="form-label" for="Gender">@Html.LabelFor(m => m.Gender, "Gender")</label>
+                    @Html.DropDownListFor(m => m.Gender, new SelectList(new[]
+                             {
+                    new { Value = "Male", Text = "Male" },
+                    new { Value = "Female", Text = "Female" },
+                    new { Value = "Kids", Text = "Kids" }
+                    }, "Value", "Text"), "Select Gender", new { @class = "form-select", id = "productGender" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.Gender)</div>
+                </div>
+
+                <!-- WareHouse Quantity -->
+                <div class="mb-4">
+                    <label class="form-label" for="WareHouseQuantity">@Html.LabelFor(m => m.WareHouseQuantity)</label>
+                    @Html.TextBoxFor(m => m.WareHouseQuantity, new { @class = "form-control", id = "productQuantity" })
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.WareHouseQuantity)</div>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="mb-4">
+                    <label class="form-label" for="ImagePath">@Html.LabelFor(m => m.ImagePath)</label>
+                    <input type="file" name="ImagePath" class="form-control" id="productImage" />
+                    <div class="text-danger">@Html.ValidationMessageFor(m => m.ImagePath)</div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="mb-3">
+                    <input type="submit" value="Create Product" class="btn btn-primary btn-lg w-100" />
+                </div>
+
+            </form>
         </div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Type)</div>
+    </div>
 
-        <div>
-            @Html.LabelFor(m => m.Gender, "Gender")
+    <!-- Product Preview Section -->
+    <div class="card mt-5 shadow-lg" id="productPreview">
+        <div class="card-header bg-success text-white text-center">
+            <h4>Product Preview</h4>
         </div>
-        <div>
-            @Html.DropDownListFor(
-                     m => m.Gender,
-                     new SelectList(new[]
-                     {
-            new { Value = "Male", Text = "Male" },
-            new { Value = "Female", Text = "Female" },
-            new { Value = "Kids", Text = "Kids" }
-            }, "Value", "Text"),
-                     "Select Gender"
-                     )
+        <div class="card-body">
+            <div class="row">
+                <!-- Product Image Preview -->
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <img id="previewImage" src="/images/default.jpg" alt="Product Image" class="img-fluid rounded">
+                    </div>
+                </div>
+
+                <!-- Product Details Preview -->
+                <div class="col-md-6">
+                    <h5 id="previewName" class="text-black">Product Name</h5>
+                    <p id="previewDescription" class="text-muted">Description of the product...</p>
+                    <p id="previewPrice" class="text-primary h4">$0.00</p>
+                    <p id="previewType" class="text-muted">Product Type: Boots</p>
+                    <p id="previewGender" class="text-muted">Gender: Male</p>
+                    <p id="previewQuantity" class="text-muted">Quantity: 0</p>
+                </div>
+            </div>
         </div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.Gender)</div>
+    </div>
 
-        <div>@Html.LabelFor(m => m.WareHouseQuantity)</div>
-        <div>@Html.TextBoxFor(m => m.WareHouseQuantity)</div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.WareHouseQuantity)</div>
+</div>
+<!-- I tva tuka  -->
+<script>
+   
+    const productName = document.getElementById("productName");
+    const productDescription = document.getElementById("productDescription");
+    const productPrice = document.getElementById("productPrice");
+    const productType = document.getElementById("productType");
+    const productGender = document.getElementById("productGender");
+    const productQuantity = document.getElementById("productQuantity");
+    const productImage = document.getElementById("productImage");
+
+    const previewName = document.getElementById("previewName");
+    const previewDescription = document.getElementById("previewDescription");
+    const previewPrice = document.getElementById("previewPrice");
+    const previewType = document.getElementById("previewType");
+    const previewGender = document.getElementById("previewGender");
+    const previewQuantity = document.getElementById("previewQuantity");
+    const previewImage = document.getElementById("previewImage");
 
 
-        <div>@Html.LabelFor(m => m.ImagePath)</div>
-        <div><input type="file" name="ImagePath" /></div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.ImagePath)</div>
+    function updatePreview() {
+        previewName.textContent = productName.value || "Product Name";
+        previewDescription.textContent = productDescription.value || "Description of the product...";
+        previewPrice.textContent = "$" + (parseFloat(productPrice.value) || 0).toFixed(2);
+        previewType.textContent = "Product Type: " + (productType.value || "Boots");
+        previewGender.textContent = "Gender: " + (productGender.value || "Male");
+        previewQuantity.textContent = "Quantity: " + (productQuantity.value || 0);
 
-        <input type="submit" value="Create Product" />
-    </form>
-</fieldset>
+  
+        if (productImage.files && productImage.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+            };
+            reader.readAsDataURL(productImage.files[0]);
+        }
+    }
+
+
+    productName.addEventListener("input", updatePreview);
+    productDescription.addEventListener("input", updatePreview);
+    productPrice.addEventListener("input", updatePreview);
+    productType.addEventListener("change", updatePreview);
+    productGender.addEventListener("change", updatePreview);
+    productQuantity.addEventListener("input", updatePreview);
+    productImage.addEventListener("change", updatePreview);
+
+    updatePreview();
+</script>

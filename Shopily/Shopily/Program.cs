@@ -1,38 +1,111 @@
-using Microsoft.EntityFrameworkCore;
-using Shopily.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using Shopily.Data;
+using Shopily.Domain.Models;
+using Shopily.Repositories;
+using System.Diagnostics;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register services with dependency injection
 builder.Services.AddControllersWithViews();
 
-// Register the DbContext and configure it to use the connection string from appsettings.json
+// Database context configuration
 builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Read connection string from appsettings.json
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add authentication services with cookie authentication
+// Custom service registrations
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<ShopRepository>();
+builder.Services.AddScoped<AdminRepository>();
+builder.Services.AddTransient<ScraperService>();  // Add this line
+
+// HttpContext accessor
+builder.Services.AddHttpContextAccessor();
+
+// Session management
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Authentication and authorization
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/User/Login"; // Redirect to login page if the user is not authenticated
-        options.LogoutPath = "/User/Logout"; // Redirect to logout page
-        options.AccessDeniedPath = "/Home/Index"; // Redirect to an access denied page if the user doesn't have permissions
+        options.LoginPath = "/User/Login";
+        options.LogoutPath = "/User/Logout";
+        options.AccessDeniedPath = "/Home/Index";
     });
 
-// Other services can be added here (e.g., scoped services, etc.)
+// Stripe configuration
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
-app.UseAuthentication(); // Enables authentication middleware
-app.UseAuthorization(); // Enables authorization middleware
-app.UseStaticFiles(); // Enables static file middleware (CSS, JS, etc.)
-app.UseStaticFiles();
+// Middleware configuration
+app.Use(async (context, next) =>
+{
+    if (context.Request.Cookies.TryGetValue("Language", out string? cookie))
+    {
+        var culture = new CultureInfo(cookie);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+    }
+    else
+    {
+        var defaultCulture = new CultureInfo("en");
+        CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+    }
+    await next.Invoke();
+});
 
-// Default route setup for MVC
+// Start Python script in the background
+StartPythonScript();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
+app.UseSession();
+
+// Routing configuration
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "news",
+    pattern: "{controller=News}/{action=Scraper}/{id?}");
 
 app.Run();
+
+// Python script runner function
+void StartPythonScript()
+{
+    try
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "py",
+            Arguments = "\"C:\\Users\\kristiqn\\Desktop\\scraper_api.py\"",
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        var process = new Process { StartInfo = startInfo };
+        process.OutputDataReceived += (sender, e) => Console.WriteLine(e.Data);
+        process.ErrorDataReceived += (sender, e) => Console.WriteLine($"Error: {e.Data}");
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Failed to start Python script: {ex.Message}");
+    }
+}

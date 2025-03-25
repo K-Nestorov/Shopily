@@ -1,29 +1,120 @@
-﻿@model Shopily.ViewModel.User.RegisterVM
-<fieldset>
+﻿@using Shopily.Domain.ViewModel.User
+@model RegisterVM
 
-    <legend>Register</legend>
-    <form action="User/Register" method="post">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded">
+                <div class="card-header text-center bg-primary text-white">
+                    <h4 class="mb-0">Register</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form action="@Url.Action("Register", "User")" method="post" novalidate>
+                        @Html.AntiForgeryToken()
 
-        <div> @Html.LabelFor(m => m.FirstName)</div>
-        <div>@Html.TextBoxFor(m => m.FirstName)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.FirstName)</div>
-        <div> @Html.LabelFor(m => m.LastName)</div>
-        <div>@Html.TextBoxFor(m => m.LastName)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.LastName)</div>
-        <div> @Html.LabelFor(m => m.Username)</div>
-        <div>@Html.TextBoxFor(m => m.Username)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Username)</div>
-        <div> @Html.LabelFor(m => m.Password)</div>
-        <div>@Html.PasswordFor(m => m.Password)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Password)</div>
-        <div> @Html.LabelFor(m => m.Email)</div>
-        <div>@Html.TextBoxFor(m => m.Email)</div>
-        <div class="ValidationMessage">  @Html.ValidationMessageFor(m => m.Email)</div>
+                        <!-- First Name -->
+                        <div class="form-group mb-4">
+                            @Html.LabelFor(m => m.FirstName, "First Name", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.FirstName, new
+                                {
+                                    @class = "form-control",
+                                    @placeholder = "Enter your first name",
+                                    @pattern = "^[A-Za-z]+$",
+                                    @title = "First Name should only contain alphabetic characters.",
+                                    @data_bs_toggle = "tooltip"
+                                })
+                       
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
+                        </div>
 
+                        <!-- Last Name -->
+                        <div class="form-group mb-4">
+                            @Html.LabelFor(m => m.LastName, "Last Name", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.LastName, new
+                                {
+                                    @class = "form-control",
+                                    @placeholder = "Enter your last name",
+                                    @pattern = "^[A-Za-z]+$",
+                                    @title = "Last Name should only contain alphabetic characters.",
+                                    @data_bs_toggle = "tooltip"
+                                })
+                           
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.LastName)
+                            </div>
+                        </div>
 
-        <input type="submit" value="Register" />
-    </form>
+                        <!-- Username -->
+                        <div class="form-group mb-4">
+                            @Html.LabelFor(m => m.Username, "Username", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Username, new
+                                {
+                                    @class = "form-control",
+                                    @placeholder = "Choose a username",
+                                    @pattern = "^[a-z0-9]*$",
+                                    @title = "Username can only contain lowercase letters and numbers.",
+                                    @data_bs_toggle = "tooltip"
+                                })
+                          
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Username)
+                            </div>
+                        </div>
 
+                        <!-- Password -->
+                        <div class="form-group mb-4">
+                            @Html.LabelFor(m => m.Password, "Password", new { @class = "form-label" })
+                            @Html.PasswordFor(m => m.Password, new
+                                {
+                                    @class = "form-control",
+                                    @placeholder = "Create a password",
+                                    @pattern = "(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}",
+                                    @title = "Password must be at least 8 characters long, including letters and numbers.",
+                                    @data_bs_toggle = "tooltip"
+                                })
+                          
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Password)
+                            </div>
+                        </div>
 
+                        <!-- Email -->
+                        <div class="form-group mb-4">
+                            @Html.LabelFor(m => m.Email, "Email", new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Email, new
+                                {
+                                    @class = "form-control",
+                                    @placeholder = "Enter your email address",
+                                    @pattern = "^[a-zA-Z0-9._%+-]+@(gmail.com|abv.bg|yahoo.com|outlook.com|hotmail.com|aol.com|icloud.com|zoho.com|mail.com|protonmail.com|yandex.com|live.com|msn.com|tutanota.com|inbox.com)$",
+                                    @title = "Please enter a valid email address .",
+                                    @data_bs_toggle = "tooltip"
+                                })
+                           
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </div>
 
-</fieldset>
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">Already have an account? <a href="/User/Login" class="text-primary">Login here</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>

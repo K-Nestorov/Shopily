@@ -1,35 +1,70 @@
-﻿@model Shopily.ViewModel.Admin.AdminEditVM
-<form action="@Url.Action("AdminEdit", "Admin")" method="post">
+﻿@using Shopily.Domain.ViewModel.Admin
+@model AdminEditVM
 
-    @Html.HiddenFor(m => m.Id)
-    <div>
-        <label>@Html.LabelFor(m => m.Username)</label>
-        @Html.TextBoxFor(m => m.Username)
-        @Html.ValidationMessageFor(m => m.Username)
-    </div>
-    <div>
-        <label>@Html.LabelFor(m => m.FirstName)</label>
-        @Html.TextBoxFor(m => m.FirstName)
-        @Html.ValidationMessageFor(m => m.FirstName)
-    </div>
-    <div>
-        <label>@Html.LabelFor(m => m.LastName)</label>
-        @Html.TextBoxFor(m => m.LastName)
-        @Html.ValidationMessageFor(m => m.LastName)
-    </div>
-    <div>
-        <label>@Html.LabelFor(m => m.Email)</label>
-        @Html.TextBoxFor(m => m.Email)
-        @Html.ValidationMessageFor(m => m.Email)
-    </div>
- 
-        <div>@Html.LabelFor(m => m.IsAdmin, "Is Admin?")</div>
-        <div>@Html.CheckBoxFor(m => m.IsAdmin)</div>
-        <div class="ValidationMessage">@Html.ValidationMessageFor(m => m.IsAdmin)</div>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Edit Admin</h4>
+                </div>
+                <div class="card-body">
+                    <form action="@Url.Action("AdminEdit", "Admin")" method="post">
+                        @Html.HiddenFor(m => m.Id)
 
-    
-    <div>
-        <input type="submit" value="Save" />
-        <a href="/Admin/Index">Back</a>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Username, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Username, new { @class = "form-control", @placeholder = "Enter username" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Username)
+                            </div>
+                        </div>
+
+                        <!-- First Name -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.FirstName, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @placeholder = "Enter first name" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.LastName, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @placeholder = "Enter last name" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.LastName)
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Enter email address" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        </div>
+
+                        <!-- Is Admin -->
+                        <div class="mb-3 form-check">
+                            @Html.CheckBoxFor(m => m.IsAdmin, new { @class = "form-check-input" })
+                            @Html.LabelFor(m => m.IsAdmin, "Is Admin?", new { @class = "form-check-label" })
+                            <div class="text-danger">
+                                @Html.ValidationMessageFor(m => m.IsAdmin)
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/Admin/Index" class="btn btn-outline-secondary">Back</a>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-</form>
+</div>

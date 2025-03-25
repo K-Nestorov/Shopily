@@ -1,0 +1,79 @@
+﻿@using Shopily.Domain.ViewModel.Orders
+@model OrderDetailVM
+
+<div class="container mt-5">
+    <h2 class="text-center mb-5">Order Details</h2>
+
+    <!-- Back Button -->
+
+
+    <!-- Order Details Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="m-0">Order Information</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Order ID:</strong> @Model.OrderId</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy")</p>
+            <p><strong>Total Cost:</strong> @Model.TotalCost.ToString("C")</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Order Notes:</strong> @Model.OrderNotes</p>
+        </div>
+    </div>
+
+    <!-- User Details Section -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="m-0">User Details</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Full Name:</strong> @Model.UserFullName</p>
+            <p><strong>Email:</strong> @Model.UserEmail</p>
+        </div>
+    </div>
+
+    <!-- Order Items Section -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="m-0">Order Items</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImagePath))
+                                {
+                                    <img src="~/images/@item.ImagePath" alt="@item.ProductName" class="img-fluid rounded" style="max-width: 120px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="mb-4">
+                <a href="/AdminStatus" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

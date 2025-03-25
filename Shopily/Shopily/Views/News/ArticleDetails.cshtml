@@ -1,0 +1,14 @@
+﻿@model Shopily.Domain.Entity.NewsArticle
+
+@{
+    ViewData["Title"] = "Article Details";
+}
+
+<div class="container">
+    <h1>Article Details</h1>
+    <p><strong>URL:</strong> @Model.Url</p>
+    <p><strong>Content:</strong></p>
+    <p>@Model.Content</p>
+    <p><strong>Date Scraped:</strong> @Model.DateScraped.ToString("yyyy-MM-dd HH:mm")</p>
+    <a href="@Url.Action("ListArticles", "News")">Back to Articles List</a>
+</div>

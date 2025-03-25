@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Verify Email";
+}
+
+<h2 class="text-center mb-4">Verify Your Email</h2>
+
+<!-- Displaying TempData notifications as alerts -->
+@if (TempData["VerificationError"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["VerificationError"]
+    </div>
+}
+
+@if (TempData["RegistrationComplete"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["RegistrationComplete"]
+    </div>
+}
+
+<!-- Form -->
+<form method="post" class="mx-auto" style="max-width: 500px;">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label for="VerificationCode" class="form-label">Enter your verification code</label>
+        <input type="text" id="VerificationCode" name="verificationCode" class="form-control" required />
+    </div>
+
+    <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Verify</button>
+    </div>
+</form>
+
+<!-- Toast Notification -->
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" id="toast-container" style="z-index: 9999;">
+    @if (TempData["RegistrationComplete"] != null || TempData["VerificationError"] != null)
+    {
+        <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">
+                    @TempData["NotificationType"]?.ToString() == "success" ? "Success" : "Error"
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                @(TempData["RegistrationComplete"] ?? TempData["VerificationError"])
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<script>
+    window.onload = function () {
+        var toastElement = document.getElementById('toast');
+        if (toastElement) {
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    };
+</script>

@@ -1,66 +1,52 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shopily.Cookies;
-using Shopily.Entity;
+using Shopily.Domain.Entity;
 using Shopily.Repositories;
-using Shopily.ViewModel;
-using Shopily.ViewModel.Admin;
-using Shopily.ViewModel.Cart;
-using Shopily.ViewModel.Pages;
-using Shopily.ViewModel.Products;
-using Shopily.ViewModel.Pages;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text.Json;
+using Stripe;
+using Stripe.Checkout;
+using Microsoft.Extensions.Options;
+using Shopily.Services;
+using Shopily.Data;
+using Shopily.Domain.Models;
+using Shopily.Domain.ViewModel.Cart;
+using Shopily.Domain.ViewModel.Orders;
+using MimeKit;
+using Shopily.Domain.ViewModel;
+using MailKit.Net.Smtp;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Shopily.Controllers
 {
     public class ShopController : Controller
     {
+        private readonly ShopRepository _shopRepository;
         private readonly Context _context;
+        private readonly StripeSettings _stripeSettings;
+        public ShopController(ShopRepository shopRepository, Context context, IOptions<StripeSettings> stripeSetting)
+        {
+            _shopRepository = shopRepository; 
+            _context = context;  
+            _stripeSettings = stripeSetting.Value; 
+        }
 
-        public ShopController(Context context)
-        {
-            _context = context;
-        }
-        private IEnumerable<Product> GetProductsForPage(int page, int itemsPerPage)
-        {
-            return _context.Products
-                .Skip((page - 1) * itemsPerPage)
-                .Take(itemsPerPage)
-                .ToList();
-        }
-        private int GetTotalItemsCount()
-        {
-            return _context.Products.Count();
-        }
+
 
         [Route("Liked")]
-        public IActionResult Like(int page=1)
+        public IActionResult Like(int page = 1)
         {
             var recentlyViewedJson = Request.Cookies["AddInLike"];
-            List<CartItemVM> recentlyViewedProducts = new List<CartItemVM>();
-            if (!string.IsNullOrEmpty(recentlyViewedJson))
-            {
-                try
-                {
-                    recentlyViewedProducts = JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error deserializing cookie: {ex.Message}");
-                    recentlyViewedProducts = new List<CartItemVM>();
-                }
-            }
+            List<CartItemVM> recentlyViewedProducts = string.IsNullOrEmpty(recentlyViewedJson)
+                ? new List<CartItemVM>()
+                : JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson) ?? new List<CartItemVM>();
 
             int itemsPerPage = 12;
-            var products = GetProductsForPage(page, itemsPerPage);
-            var totalProducts = GetTotalItemsCount();
+            var products = _shopRepository.GetProducts(page, itemsPerPage);
+            var totalProducts = _shopRepository.GetTotalProductsCount();
             var pagesCount = (int)Math.Ceiling((double)totalProducts / itemsPerPage);
             ViewData["AddInLike"] = recentlyViewedProducts;
             return View();
         }
-
 
         [Route("Cart")]
         public IActionResult Cart(int page = 1)
@@ -68,335 +54,330 @@ namespace Shopily.Controllers
             if (!User.Identity.IsAuthenticated)
             {
                 var recentlyViewedJson = Request.Cookies["AddInCart"];
-                List<CartItemVM> recentlyViewedProducts = new List<CartItemVM>();
-                if (!string.IsNullOrEmpty(recentlyViewedJson))
-                {
-                    try
-                    {
-                        recentlyViewedProducts = JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error deserializing cookie: {ex.Message}");
-                        recentlyViewedProducts = new List<CartItemVM>();
-                    }
-                }
+                List<CartItemVM> recentlyViewedProducts = string.IsNullOrEmpty(recentlyViewedJson)
+                    ? new List<CartItemVM>()
+                    : JsonSerializer.Deserialize<List<CartItemVM>>(recentlyViewedJson) ?? new List<CartItemVM>();
+
                 ViewData["AddInCart"] = recentlyViewedProducts;
+                return View();
             }
             else
             {
                 var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+                var cartItems = _shopRepository.GetCartItems(loggedUserId);
 
-                
-                var cartItems = _context.Carts
-                    .Where(c => c.UserId == loggedUserId) 
-                    .Include(c => c.Product)
-                    .ToList();
-
-                int itemsPerPage = 12;
-                var products = GetProductsForPage(page, itemsPerPage);
-                var totalProducts = GetTotalItemsCount();
-                var pagesCount = (int)Math.Ceiling((double)totalProducts / itemsPerPage);
-
-                var model = new ViewModel.Cart.IndexVM 
-                {
-                    Items = cartItems.Select(c => new CartItemVM
-                    {
-                        ProductId = c.ProductId,
-                        ProductName = c.Product.ProductName,
-                        Quantity = 1,
-                        Price = c.Product.Price,
-                        ImagePath=c.Product.ImagePath,
-                        
-                    }).ToList(),
-                };
-                return View(model);
+                return View(new IndexVM { Items = cartItems });
             }
-            return View();           
         }
+        [Route("Shop")]
+        public IActionResult Shop(string productName, string category, string productTypes, int page = 1)
+        {
+            string[] productTypesArray = string.IsNullOrEmpty(productTypes) ? new string[] { } : productTypes.Split(',');
 
-        public IActionResult AddInCart(int clickedId,int likedId)
+            var shopVM = _shopRepository.CreateShopVM(productName, category, productTypesArray, page);
+            return View(shopVM);
+        }
+        public IActionResult Delete(int productId, int likedId)
         {
             if (likedId != 0)
             {
-                Product? item = _context.Products.FirstOrDefault(u => u.Id == likedId);
-                var AddInLikeJson = Request.Cookies["AddInLike"];
-                List<CartItemVM> AddInLike = new List<CartItemVM>();
-                if (!string.IsNullOrEmpty(AddInLikeJson))
-                {
-                    AddInLike = JsonSerializer.Deserialize<List<CartItemVM>>(AddInLikeJson);
-                }
-                AddInLike.Add(new CartItemVM
-                {
-                    ProductId = item.Id,
-                    ProductName = item.ProductName,
-                    ImagePath = item.ImagePath,
-                    Price = item.Price,
-                    //QUANTITY
-
-                });
-                var jsonData = JsonSerializer.Serialize(AddInLike);
-                Response.Cookies.Append("AddInLike", jsonData, new CookieOptions
-                {
-                    Expires = DateTimeOffset.Now.AddDays(1)
-                });
-                var AddIn = HttpContext.Request.Cookies["AddInLike"];
+                _shopRepository.RemoveFromCookie("AddInLike", likedId, Request, Response);
+                TempData["Notification"] = "Item removed from Liked!";
+                TempData["NotificationType"] = "warning";
+            }
+            else if (User.Identity.IsAuthenticated)
+            {
+                var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+                _shopRepository.RemoveFromCart(productId, loggedUserId);
+                TempData["Notification"] = "Item removed from Cart!";
+                TempData["NotificationType"] = "warning";
             }
             else
             {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    Product? item = _context.Products.FirstOrDefault(u => u.Id == clickedId);
-                    var AddInCartJson = Request.Cookies["AddInCart"];
-                    List<CartItemVM> AddInCart = new List<CartItemVM>();
-                    if (!string.IsNullOrEmpty(AddInCartJson))
-                    {
-                        AddInCart = JsonSerializer.Deserialize<List<CartItemVM>>(AddInCartJson);
-                    }
-                    AddInCart.Add(new CartItemVM
-                    {
-                        ProductId = item.Id,
-                        ProductName = item.ProductName,
-                        ImagePath = item.ImagePath,
-                        Price = item.Price,
-                        //QUANTITY
-
-                    });
-                    var jsonData = JsonSerializer.Serialize(AddInCart);
-                    Response.Cookies.Append("AddInCart", jsonData, new CookieOptions
-                    {
-                        Expires = DateTimeOffset.Now.AddDays(1)
-                    });
-                    var AddIn = HttpContext.Request.Cookies["AddInCart"];
-                }
-                else
-                {
-                    var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
-
-                    var product = _context.Products.FirstOrDefault(p => p.Id == clickedId);
-                    if (product == null)
-                    {
-                        ModelState.AddModelError("", "Product not found.");
-                        return RedirectToAction("Index", "Home");
-                    }
-                    var existingCartItem = _context.Carts
-                        .FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUserId);
-
-                    if (existingCartItem == null)
-                    {
-                        var newCartItem = new Cart
-                        {
-                            UserId = loggedUserId,
-                            ProductId = product.Id
-
-                        };
-
-                        _context.Carts.Add(newCartItem);
-                        _context.SaveChanges();
-                    }
-                }
-            }
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult Delete(int productId, int UserId,int LikedId)
-        {
-            if (LikedId!=0)
-            {
-               string sessionData = Request.Cookies["AddInLike"];
-                if (!string.IsNullOrEmpty(sessionData))
-                {
-                    var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<CartItemVM>>(sessionData);
-                    if (cartItems != null)
-                    {
-                        var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == LikedId);
-                        if (itemToRemove != null)
-                        {
-                            cartItems.Remove(itemToRemove);
-                            string updatedSessionData = System.Text.Json.JsonSerializer.Serialize(cartItems);
-                            Response.Cookies.Append("AddInLike", updatedSessionData, new CookieOptions
-                            {
-                                HttpOnly = true,
-                                Expires = DateTime.Now.AddHours(1),
-                                Path = "/"
-                            });
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (!User.Identity.IsAuthenticated)
-                {
-                    string sessionData = Request.Cookies["AddInCart"];
-
-                    if (!string.IsNullOrEmpty(sessionData))
-                    {
-                        var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<CartItemVM>>(sessionData);
-
-                        if (cartItems != null)
-                        {
-                            var itemToRemove = cartItems.FirstOrDefault(item => item.ProductId == productId);
-                            if (itemToRemove != null)
-                            {
-                                cartItems.Remove(itemToRemove);
-                                string updatedSessionData = System.Text.Json.JsonSerializer.Serialize(cartItems);
-                                Response.Cookies.Append("AddInCart", updatedSessionData, new CookieOptions
-                                {
-                                    HttpOnly = true,
-                                    Expires = DateTime.Now.AddHours(1),
-                                    Path = "/"
-                                });
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
-
-                    var cartItem = _context.Carts
-                        .FirstOrDefault(c => c.UserId == loggedUserId && c.ProductId == productId);
-                    if (cartItem == null)
-                    {
-                        return RedirectToAction("Index");
-                    }
-
-                    _context.Carts.Remove(cartItem);
-                    _context.SaveChanges();
-                }
+                _shopRepository.RemoveFromCookie("AddInCart", productId, Request, Response);
+                TempData["Notification"] = "Item removed from Cart!";
+                TempData["NotificationType"] = "warning";
             }
 
             return RedirectToAction("Index");
         }
-
-        [Route("Checkout")]
-        public IActionResult Checkout()
+        [HttpGet]
+        public IActionResult Shopsingle(int productId)
         {
-            return View();
-        }
-    
-        [Route("Shop")]
-        public IActionResult Shop(string productName, string category, string productType, int page = 1)
-        {
-            int itemsPerPage = 12;
-
-            var allProducts = GetAllProducts();
-
-            if (!string.IsNullOrEmpty(productName))
+            var product = _shopRepository.GetProductById(productId);
+            if (product == null)
             {
-                allProducts = allProducts.Where(p => p.ProductName.Contains(productName, StringComparison.OrdinalIgnoreCase)).ToList();
+                return RedirectToAction("Index", "Home"); 
             }
 
-            if (!string.IsNullOrEmpty(category))
-            {
-                allProducts = allProducts.Where(p => p.Gender == category).ToList();
-            }
+            _shopRepository.AddToRecentlyViewed(product, Response);
 
-            if (!string.IsNullOrEmpty(productType))
-            {
-                allProducts = allProducts.Where(p => p.Type == productType).ToList();
-            }
-
-            var maleCount = allProducts.Count(p => p.Gender == "Male");
-            var femaleCount = allProducts.Count(p => p.Gender == "Female");
-            var kidsCount = allProducts.Count(p => p.Gender == "Kids");
-
-
-            var totalProducts = allProducts.Count();
-            var pagesCount = (int)Math.Ceiling((double)totalProducts / itemsPerPage);
-            var products = allProducts.Skip((page - 1) * itemsPerPage).Take(itemsPerPage).ToList();
-
-            var model = new ViewModel.Products.IndexVM
-            {
-                Items = products,
-                Pager = new PagerVM
-                {
-                    ItemsPerPage = itemsPerPage,
-                    PagesCount = pagesCount,
-                    CurrentPage = page
-                },
-                ProductName = productName,
-                Category = category,
-                ProductType = productType,
-
-           
-                MaleCount = maleCount,
-                FemaleCount = femaleCount,
-                KidsCount = kidsCount
-            };
-
-            return View(model);
-        }
-
-
-        private List<Product> GetAllProducts()
-        {
-           
-            return _context.Products.ToList();  
-        }
-
-        public IActionResult Shopsingle(int ProductId)
-        {
-            Product? item = _context.Products.FirstOrDefault(u => u.Id == ProductId);
-            if (item == null)
-            {
-                return RedirectToAction("Index", "Admin");
-            }
-
-            SingleProductVM model = new SingleProductVM
-            {
-                Id = item.Id,
-                ProductName = item.ProductName,
-                Description = item.Description,
-                Price = item.Price,
-                Gender = item.Gender,
-                Image = item.ImagePath,
-            };
-
-            var recentlyViewedJson = Request.Cookies["RecentlyViewed"];
-            List<RecentlyViewedCookie> recentlyViewedProducts = new List<RecentlyViewedCookie>();
-
-            if (!string.IsNullOrEmpty(recentlyViewedJson))
-            {
-                try
-                {
-                    recentlyViewedProducts = JsonSerializer.Deserialize<List<RecentlyViewedCookie>>(recentlyViewedJson);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error deserializing cookie: {ex.Message}");
-                    recentlyViewedProducts = new List<RecentlyViewedCookie>();
-                }
-            }
-
-            if (recentlyViewedProducts.All(p => p.ProductId != item.Id))
-            {
-                recentlyViewedProducts.Add(new RecentlyViewedCookie
-                {
-                    ProductId = item.Id,
-                    ProductName = item.ProductName,
-                    Description = item.Description,
-                    Price = item.Price,
-                    ImagePath = item.ImagePath,
-                });
-            }
-
-            var jsonData = JsonSerializer.Serialize(recentlyViewedProducts);
-            Response.Cookies.Append("RecentlyViewed", jsonData, new CookieOptions
-            {
-                Expires = DateTimeOffset.Now.AddMinutes(30)
-            });
-
-            Console.WriteLine($"Serialized Recently Viewed Products: {jsonData}");
-
-            // Pass the data to the view
-            var recentlyViewed = HttpContext.Request.Cookies["RecentlyViewed"];
+            var recentlyViewed = Request.Cookies["RecentlyViewed"];
             ViewBag.RecentlyViewed = recentlyViewed;
 
-            return View(model);
+            return View(ProductServices.AddSigneProduct(product));
+        }
+        [HttpPost]
+        [Route("Shop/AddInCart")]
+        public IActionResult AddInCart(int clickedId, int? likedId, int quantity = 1)
+        {
+            if (likedId.HasValue && likedId.Value != 0)
+            {
+                var addInLikeJson = Request.Cookies["AddInLike"];
+                var addInLike = string.IsNullOrEmpty(addInLikeJson)
+                    ? new List<CartItemVM>()
+                    : JsonSerializer.Deserialize<List<CartItemVM>>(addInLikeJson);
+
+                if (addInLike.Any(like => like.ProductId == likedId.Value))
+                {
+                    TempData["Notification"] = "Product is already in liked items!";
+                    TempData["NotificationType"] = "info";
+                }
+                else
+                {
+                    _shopRepository.AddToLikedItems(likedId.Value, Request, Response);
+                    TempData["Notification"] = "Product added to liked items!";
+                    TempData["NotificationType"] = "success";
+                }
+            }
+            else
+            {
+                var item = _context.Products.FirstOrDefault(u => u.Id == clickedId);
+                if (item == null)
+                {
+                    TempData["Notification"] = "Product not found!";
+                    TempData["NotificationType"] = "error";
+                    return RedirectToAction("Shopsingle", new { ProductId = clickedId });
+                }
+
+                if (User.Identity.IsAuthenticated)
+                {
+                    var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+                    var existingCartItem = _context.Carts.FirstOrDefault(c => c.ProductId == clickedId && c.UserId == loggedUserId);
+
+                    if (existingCartItem != null)
+                    {
+                        TempData["Notification"] = "Product is already in the cart!";
+                        TempData["NotificationType"] = "info";
+                    }
+                    else
+                    {
+                        _context.Carts.Add(new Cart
+                        {
+                            UserId = loggedUserId,
+                            ProductId = item.Id,
+                            Quantity = quantity
+                        });
+                        _context.SaveChanges();
+
+                        TempData["Notification"] = "Product added to cart!";
+                        TempData["NotificationType"] = "success";
+                    }
+                }
+                else
+                {
+                    var addInCartJson = Request.Cookies["AddInCart"];
+                    var addInCart = string.IsNullOrEmpty(addInCartJson)
+                        ? new List<CartItemVM>()
+                        : JsonSerializer.Deserialize<List<CartItemVM>>(addInCartJson);
+
+                    if (addInCart.Any(cart => cart.ProductId == clickedId))
+                    {
+                        TempData["Notification"] = "Product is already in the cart!";
+                        TempData["NotificationType"] = "info";
+                    }
+                    else
+                    {
+                        addInCart.Add(new CartItemVM
+                        {
+                            ProductId = item.Id,
+                            ProductName = item.ProductName,
+                            ImagePath = item.ImagePath,
+                            Price = item.Price,
+                            Quantity = quantity
+                        });
+
+                        _shopRepository.UpdateCookie("AddInCart", addInCart, Response);
+                        TempData["Notification"] = "Product added to cart!";
+                        TempData["NotificationType"] = "success";
+                    }
+                }
+            }
+
+            return RedirectToAction("Shopsingle", new { ProductId = clickedId });
+        }
+
+     public IActionResult CreateCheckOutSession(OrderVM order)
+        {
+
+            var currency = "usd";
+            var cancelUrl = "https://mediathrive.com/";  
+
+            StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
+
+            // Collect ProductIds from the cart items
+
+            var options = new Stripe.Checkout.SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = currency,
+                    UnitAmount = (long)(order.TotalCost * 100),
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "Total Cart Purchase",
+                        Description = "Total amount for cart"
+                    }
+                },
+              Quantity=1
+            }
+        },
+                Mode = "payment",
+                SuccessUrl = $"{Request.Scheme}://{Request.Host}" + Url.Action("CheckoutSuccess", "Shop", order),  
+                CancelUrl = cancelUrl,
+                Metadata = new Dictionary<string, string>
+        {
+            { "OrderId", $"{order.Id}" },
+            { "CustomerName", $"{order.FirstName} {order.LastName}" },
+            { "CustomerEmail", $"{order.Email}" },
+            { "CustomerPhone", $"{order.Phone}" },
+            { "CustomerCountry", $"{order.Country}" },
+            { "TotalCost", $"{order.TotalCost}" },
+            { "OrderDate", $"{order.OrderDate:yyyy-MM-dd}" },
+            { "ProductIds", order.ProductIds },
+                    {"Status",order.Status },
+                    {"Quantity",order.ProductQuantity }
+
+        }
+            };
+
+            var service = new Stripe.Checkout.SessionService();
+            var session = service.Create(options);
+
+            return Redirect(session.Url);
+        }
+
+        [HttpGet]
+        public IActionResult Checkout()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var loggedUserId = Guid.Parse(User.FindFirst(ClaimTypes.Sid)?.Value);
+                var cartItems = _shopRepository.GetCartItems(loggedUserId);
+
+                OrderVM order = new OrderVM(loggedUserId, cartItems);
+
+                return View(order);
+            }
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Checkout(OrderVM order)
+        {      
+                return CreateCheckOutSession(order);                      
+        }
+
+        public async Task<IActionResult> CheckoutSuccess(OrderVM order)
+        {
+
+            var orderRepository = new OrderRepositoy(_context);
+            orderRepository.SaveOrder(new Order(order));
+
+            var productIds = order.ProductIds.Split(',').Select(int.Parse).ToList();
+            var products = _context.Products.Where(p => productIds.Contains(p.Id)).ToList();
+            var QuantityId = order.ProductQuantity.Split(',').Select(int.Parse).ToList();
+
+            var bodyBuilder = new BodyBuilder();
+            var cartItemsHtml = "";
+
+            foreach (var product in products)
+            {
+                string contentId = Guid.NewGuid().ToString(); 
+                var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/", product.ImagePath);
+
+                if (System.IO.File.Exists(imagePath))
+                {
+                    var image = bodyBuilder.LinkedResources.Add(imagePath);
+                    image.ContentId = contentId;
+                }
+
+                var index = productIds.IndexOf(product.Id);
+                var quantity = (index >= 0) ? QuantityId[index] : 0;
+
+                cartItemsHtml += $@"
+            <tr>
+                <td style='border: 1px solid #ddd; padding: 8px; text-align: center;'>
+                    <img src='cid:{contentId}' style='width: 50px; height: auto;' />
+                </td>
+                <td style='border: 1px solid #ddd; padding: 8px;'>{product.ProductName}</td>
+                <td style='border: 1px solid #ddd; padding: 8px;'>{product.Id}</td>
+                <td style='border: 1px solid #ddd; padding: 8px;'>{quantity}</td> <!-- Correct quantity -->
+                <td style='border: 1px solid #ddd; padding: 8px;'>${product.Price.ToString("F2")}</td>
+                <td style='border: 1px solid #ddd; padding: 8px;'>${(product.Price * quantity).ToString("F2")}</td> <!-- Correct total -->
+            </tr>";
+            }
+
+            bodyBuilder.HtmlBody = $@"
+    <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+        <h2 style='color: #4CAF50;'>Thank you for your order!</h2>
+        <p>Dear <strong>{order.FirstName} {order.LastName}</strong>,</p>
+        <p>We have successfully received your order. Here are the details:</p>
+        <table style='width: 100%; border-collapse: collapse; margin: 20px 0;'>
+            <thead>
+                <tr style='background: #f4f4f4;'>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Product Image</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Product Name</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Product ID</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Quantity</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Price</th>
+                    <th style='border: 1px solid #ddd; padding: 8px; text-align: left;'>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {cartItemsHtml}
+            </tbody>
+            <tfoot>
+                <tr style='background: #f9f9f9; font-weight: bold;'>
+                    <td colspan='5' style='border: 1px solid #ddd; padding: 8px; text-align: right;'>Total Cost:</td>
+                    <td style='border: 1px solid #ddd; padding: 8px;'>${order.TotalCost.ToString("F2")}</td>
+                </tr>
+              
+            </tfoot>
+        </table>
+  <p style='margin-top: 20px;'>This is the notes that you left for your order {order.OrderNotes}</p>
+        <p style='margin-top: 20px;'>If you have any questions, feel free to contact us at <a href='mailto:support@shopily.com'>support@shopily.com</a>.</p>
+        <p style='margin-top: 30px;'>Best regards,<br/><strong>The Shopily Team</strong></p>
+        <hr />
+        <p style='font-size: 12px; color: #999;'>This is an automated email. Please do not reply to this email.</p>
+    </div>";
+
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("Shopily", "noreply@shopily.com"));
+            emailMessage.To.Add(new MailboxAddress("", order.Email));
+            emailMessage.Subject = "Your Shopily Order Confirmation";
+            emailMessage.Body = bodyBuilder.ToMessageBody(); 
+
+            using (var smtp = new SmtpClient())
+            {
+                await smtp.ConnectAsync("smtp.mailtrap.io", 587, MailKit.Security.SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync("cd8148ee8ed88d", "56907250c2b5cb");
+                await smtp.SendAsync(emailMessage);
+                await smtp.DisconnectAsync(true);
+            }
+
+            TempData["Notification"] = "Your order confirmation email has been sent successfully!";
+            return RedirectToAction("Thankyou", "Home");
         }
 
     }
 }
+
+

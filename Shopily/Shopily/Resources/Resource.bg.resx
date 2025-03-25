@@ -1,0 +1,346 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutMe" xml:space="preserve">
+    <value>За нас</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Магазин</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Поръчки</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Връзка с нас</value>
+  </data>
+  <data name="AllUsers" xml:space="preserve">
+    <value>Всички Потребители</value>
+  </data>
+  <data name="Allproducts" xml:space="preserve">
+    <value>Всички Продукти</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Създаване на потребител</value>
+  </data>
+  <data name="CreateProduct" xml:space="preserve">
+    <value>Създаване на продукт</value>
+  </data>
+  <data name="Subsribe" xml:space="preserve">
+    <value>Абонирай се</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Изпрати</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="BestShoes" xml:space="preserve">
+    <value>Намери перфектните обувки за теб</value>
+  </data>
+  <data name="Under" xml:space="preserve">
+    <value>Голямо разнообразие от обувки за него и за нея и не само</value>
+  </data>
+  <data name="Collections" xml:space="preserve">
+    <value>Колекции</value>
+  </data>
+  <data name="Women" xml:space="preserve">
+    <value>Жени</value>
+  </data>
+  <data name="Men" xml:space="preserve">
+    <value>Мъже</value>
+  </data>
+  <data name="Kids" xml:space="preserve">
+    <value>Деца</value>
+  </data>
+  <data name="RecentlyView" xml:space="preserve">
+    <value>Наскоро видяни продукти</value>
+  </data>
+  <data name="NoView" xml:space="preserve">
+    <value>Няма наскоро видяни продукти</value>
+  </data>
+  <data name="BigSale" xml:space="preserve">
+    <value>Big sale!</value>
+  </data>
+  <data name="Less" xml:space="preserve">
+    <value>50% намаление на всички продукти</value>
+  </data>
+  <data name="BigText" xml:space="preserve">
+    <value>Дрехите с най високо качество и най ниски цени са намалени още повече през месец декември не го мисли а си вземи</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Как започнахме</value>
+  </data>
+  <data name="FreeShipping" xml:space="preserve">
+    <value>Безплатна доставка</value>
+  </data>
+  <data name="Loremtext" xml:space="preserve">
+    <value>Нашето пътуване започна с проста идея: да създадем пазаруване, което съчетава качество, достъпност и удобство. Това, което започна като малък страстен проект, се превърна в процъфтяващ онлайн магазин, предлагащ внимателно подбрани продукти за клиенти от цял ​​свят.
+
+От самото начало се фокусирахме върху снабдяването с висококачествени артикули, работата с доверени доставчици и осигуряването на отлично обслужване на клиентите. С всеотдайност и упорит труд разширихме нашите колекции, прегърнахме иновациите и изградихме общност от лоялни клиенти, които ни вдъхновяват всеки ден.
+
+Днес ние продължаваме да се развиваме, като винаги се стремим да ви предоставим най-добрите продукти, като същевременно оставаме верни на нашите ценности за доверие, прозрачност и удовлетвореност на клиентите. Благодарим ви, че сте част от нашата история!</value>
+  </data>
+  <data name="FreeShip" xml:space="preserve">
+    <value>Първата ви поръчка ще бъде доставена безплатно</value>
+  </data>
+  <data name="FreeReturn" xml:space="preserve">
+    <value>Връщането е безплатно 1 седмица след получаване на пратката</value>
+  </data>
+  <data name="FreeRet" xml:space="preserve">
+    <value>Безплатно връщане</value>
+  </data>
+  <data name="CustomSupport" xml:space="preserve">
+    <value>Обслужване на клиенти</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>Нашият екип е подготвен да отговори на всеки вас въпрос 24/7</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Начална страница</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Първо име</value>
+  </data>
+  <data name="GetIn" xml:space="preserve">
+    <value>Свържете се с нас</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Тема</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Съобщение</value>
+  </data>
+  <data name="SendMessage" xml:space="preserve">
+    <value>Изпрати съобщението си</value>
+  </data>
+  <data name="Thankyou" xml:space="preserve">
+    <value>Благодаря за поръчката</value>
+  </data>
+  <data name="CompleteOrder" xml:space="preserve">
+    <value>Вашата поръчка беше направена успешно.</value>
+  </data>
+  <data name="BackToShop" xml:space="preserve">
+    <value>Върни се в магазина</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>Име на продукта</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Цена</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Снимка</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Общо</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Общо</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Изтрии</value>
+  </data>
+  <data name="Coupon" xml:space="preserve">
+    <value>Въведе кода на вашият код за отстъпка (Ако имате такъв)</value>
+  </data>
+  <data name="Coup" xml:space="preserve">
+    <value>Купон</value>
+  </data>
+  <data name="CouponCode" xml:space="preserve">
+    <value>Код за отстъпка</value>
+  </data>
+  <data name="ApplyCoupon" xml:space="preserve">
+    <value>Приложи кода за отстъпка</value>
+  </data>
+  <data name="ProccedToCheckout" xml:space="preserve">
+    <value>Завърши поръчката</value>
+  </data>
+  <data name="FName" xml:space="preserve">
+    <value>Трябва да въведете първото си име</value>
+  </data>
+  <data name="LName" xml:space="preserve">
+    <value>Трябва да въведете фамилията си</value>
+  </data>
+  <data name="EmailS" xml:space="preserve">
+    <value>Въведете валиден емайл</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Телефоннен номер</value>
+  </data>
+  <data name="PhoneL" xml:space="preserve">
+    <value>Въведете телефонният си номер</value>
+  </data>
+  <data name="ShippingAddress" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="County" xml:space="preserve">
+    <value>Държава</value>
+  </data>
+  <data name="CountryL" xml:space="preserve">
+    <value>Въведете държавата </value>
+  </data>
+  <data name="OrderNotes" xml:space="preserve">
+    <value>Допълнителна информация</value>
+  </data>
+  <data name="ContinueShoping" xml:space="preserve">
+    <value>Продължете да пазарувате</value>
+  </data>
+  <data name="AddToCart" xml:space="preserve">
+    <value>Добави в количката</value>
+  </data>
+  <data name="AddToLike" xml:space="preserve">
+    <value>Добави в харесани</value>
+  </data>
+  <data name="ShopAll" xml:space="preserve">
+    <value>Всички продукти</value>
+  </data>
+  <data name="Boots" xml:space="preserve">
+    <value>Обувки</value>
+  </data>
+  <data name="Sweater" xml:space="preserve">
+    <value>Пуловри</value>
+  </data>
+  <data name="Jacket" xml:space="preserve">
+    <value>Якета</value>
+  </data>
+  <data name="ProductType" xml:space="preserve">
+    <value>Тип продукти</value>
+  </data>
+  <data name="NoProducts" xml:space="preserve">
+    <value>Не бяха намерени продукти</value>
+  </data>
+  <data name="NoOrders" xml:space="preserve">
+    <value>Все още нямата поръчки</value>
+  </data>
+  <data name="Edityourprofile" xml:space="preserve">
+    <value>Промяна на настройките на профила</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Вписване</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Регистриране</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Излизане от профила</value>
+  </data>
+</root>

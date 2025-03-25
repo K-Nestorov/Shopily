@@ -1,87 +1,111 @@
-﻿@model Shopily.ViewModel.Products.SingleProductVM
-
-<main>
+﻿<main>
+    <!-- Breadcrumb -->
     <div class="bg-light py-3">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 mb-0">
-                    <a href="/">Home</a>
-                    <span class="mx-2 mb-0">/</span>
+                    <a href="/" class="text-decoration-none text-primary">Home</a>
+                    <span class="mx-2">/</span>
                     <strong class="text-black">@Model.ProductName</strong>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Product Section -->
     <div class="site-section">
         <div class="container">
             <div class="row">
+                <!-- Product Image -->
                 <div class="col-md-6">
-                    <img src="@Url.Content("~/images/" + Model.Image)" alt="@Model.ProductName" class="img-fluid">
-
+                    <div class="card border-0 shadow-sm">
+                        <img src="@Url.Content("~/images/" + Model.Image)" alt="@Model.ProductName" class="img-fluid rounded">
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h2 class="text-black">@Model.ProductName</h2>
-                    <p>@Model.Description</p>
-                    <p><strong class="text-primary h4">@Model.Price</strong></p>
 
-                    <div class="mb-1 d-flex">
-                        <label class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                                <input type="radio" name="shop-sizes">
-                            </span>
-                            <span class="d-inline-block text-black">Small</span>
-                        </label>
-                        <label class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                                <input type="radio" name="shop-sizes">
-                            </span>
-                            <span class="d-inline-block text-black">Medium</span>
-                        </label>
-                        <label class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                                <input type="radio" name="shop-sizes">
-                            </span>
-                            <span class="d-inline-block text-black">Large</span>
-                        </label>
-                        <label class="d-flex mr-3 mb-3">
-                            <span class="d-inline-block mr-2" style="top:-2px; position: relative;">
-                                <input type="radio" name="shop-sizes">
-                            </span>
-                            <span class="d-inline-block text-black">Extra Large</span>
-                        </label>
+                <!-- Product Details -->
+                <div class="col-md-6">
+                    <h2 class="text-black font-weight-bold">@Model.ProductName</h2>
+                    <p class="text-muted">@Model.Description</p>
+                    <p class="text-primary h4 font-weight-bold">$@Model.Price</p>
+
+                    <!-- Quantity Selector -->
+                    <div class="mb-4">
+                        <label class="text-uppercase font-weight-bold">Quantity</label>
+                        <div class="input-group mb-3" style="max-width: 140px;">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary js-btn-minus" type="button">&minus;</button>
+                            </div>
+                            <input type="text" class="form-control text-center" name="quantity" value="1">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary js-btn-plus" type="button">&plus;</button>
+                            </div>
+                        </div>
                     </div>
 
-                   
+                    <!-- Add to Cart & Wishlist Buttons -->
+                    <form action="/Shop/AddInCart" method="post" class="mr-2">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="clickedId" value="@Model.Id" />
+                        <input type="hidden" id="cart-quantity" name="quantity" value="1" /> <!-- Hidden input for quantity -->
 
-                    <p>
+                        <button type="submit" class="btn btn-primary px-4 py-2">
+                            <i class="fas fa-shopping-cart"></i> @Shopily.Resources.Resource.AddToCart
+                        </button>
+                    </form>
+
+
                         <form action="/Shop/AddInCart" method="post">
-                            <input type="hidden" name="clickedId" value="@Model.Id" />
-                            <div class="mb-5">
-                                <div class="input-group mb-3" style="max-width: 120px;">
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
-                                    </div>
-                                    <input type="text" class="form-control text-center" name="quantity" value="1">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
-                                    </div>
-                                </div>
-                            </div>
-                            <button type="submit">Add to Cart</button>
-                        </form>
-                        <form action="/Shop/AddInCart" method="post">
+                            @Html.AntiForgeryToken()
                             <input type="hidden" name="likedId" value="@Model.Id" />
-                            <div class="mb-5">
-                                <div class="input-group mb-3" style="max-width: 120px;">                                  
-                                    <input type="text" class="form-control text-center" name="quantity" value="1">
-                                </div>
-                            </div>
-                            <button type="submit">Add to Like</button>
-                            </form>
-                    </p>
+                            <button type="submit" class="btn btn-outline-danger px-4 py-2">
+                                <i class="fas fa-heart"></i> Add to Like
+                            </button>
+                        </form>
+                    </div>
+                    <a class="btn btn-secondary" href="/Shop">Back</a>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".js-btn-minus").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                let input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                let value = parseInt(input.value, 10) || 1;
+                input.value = Math.max(1, value - 0); 
+            });
+        });
+
+        document.querySelectorAll(".js-btn-plus").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                let input = this.closest('.input-group').querySelector('input[name="quantity"]');
+                let value = parseInt(input.value, 10) || 1;
+                input.value = value + 0;
+            });
+        });
+
+        // Sync the quantity input with form submission
+        document.querySelectorAll("form").forEach(function (form) {
+            form.addEventListener("submit", function () {
+                let quantityInput = document.querySelector('input[name="quantity"]');
+                let hiddenQuantity = document.getElementById("cart-quantity");
+                if (quantityInput && hiddenQuantity) {
+                    hiddenQuantity.value = quantityInput.value; 
+                }
+            });
+        });
+    });
+
+    
+   </script> 
+
+
+
+

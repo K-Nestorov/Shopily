@@ -1,20 +1,41 @@
-﻿@model Shopily.ViewModel.Products.IndexVM
-@using Shopily.Entity
+﻿@using Shopily.Domain.Entity
+@using Shopily.Domain.ViewModel.Products
+@model IndexVM
+
 @{
     ViewData["Title"] = "Admin Products Page";
 }
 
-@foreach (Product item in Model.Items)
-{
-    <div>
-        <div>Product ID: @item.Id</div>
-        <img src="/Images/@item.ImagePath" alt="Product Image" width="300px" height="200px" />
+<div class="container my-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h4>Admin Product Page</h4>
+        </div>
+        <div class="row g-4">
+            @foreach (Product item in Model.Items)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm">
+                        <!-- Product Image with clickable link -->
+                        <a href="/Shop/Shopsingle?ProductId=@item.Id">
+                            <img src="/Images/@item.ImagePath" class="card-img-top" alt="Product Image" style="height: 200px; object-fit: cover;" />
+                        </a>
 
-        <div>Image Path: @item.ImagePath</div>
+                        <!-- Product Details -->
+                        <div class="card-body">
+                            <h5 class="card-title">Product Name: @item.ProductName</h5>
+                            <p class="card-text text-muted"><strong>Gender:</strong> @item.Gender</p>
+                            <p class="card-text text-muted"><strong>Warehouse Quantity:</strong> @item.WareHouseQuantity</p>
 
-        <a href="/Admin/AdminProductEdit?Id=@item.Id">Edit</a>
-        <a href="/Admin/AdminProductDelete?Id=@item.Id">Delete</a>
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/AdminProductEdit?Id=@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                                <a href="/Admin/AdminProductDelete?Id=@item.Id" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-
-}
-
+</div>

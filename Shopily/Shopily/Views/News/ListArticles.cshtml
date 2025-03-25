@@ -1,0 +1,31 @@
+﻿@using System.Net
+@model IEnumerable<Shopily.Domain.Entity.NewsArticle>
+
+<div class="container">
+    <h1>Saved Articles</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Source</th>
+                <th>Date Published</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in Model)
+            {
+                <tr>
+                    <td>@Html.Raw(WebUtility.HtmlDecode(article.Title))</td>
+                    <td>@article.Author</td>
+                    <td>@article.SourceWebsite</td>
+                    <td>@article.DatePublished?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a href="@Url.Action("ArticleDetails", "News", new { id = article.Id })">View Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
